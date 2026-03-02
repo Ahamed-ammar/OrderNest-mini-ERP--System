@@ -1,0 +1,133 @@
+/**
+ * Application-wide constants
+ */
+
+// Order Types
+export const ORDER_TYPES = {
+  SERVICE_ONLY: 'serviceOnly',
+  BUY_AND_SERVICE: 'buyAndService'
+};
+
+// Order Status
+export const ORDER_STATUS = {
+  PENDING: 'Pending',
+  IN_PROGRESS: 'InProgress',
+  READY: 'Ready',
+  OUT_FOR_DELIVERY: 'OutForDelivery',
+  DELIVERED: 'Delivered',
+  CANCELLED: 'Cancelled'
+};
+
+// Valid status transitions
+export const VALID_STATUS_TRANSITIONS = {
+  [ORDER_STATUS.PENDING]: [ORDER_STATUS.IN_PROGRESS, ORDER_STATUS.CANCELLED],
+  [ORDER_STATUS.IN_PROGRESS]: [ORDER_STATUS.READY, ORDER_STATUS.CANCELLED],
+  [ORDER_STATUS.READY]: [ORDER_STATUS.OUT_FOR_DELIVERY, ORDER_STATUS.CANCELLED],
+  [ORDER_STATUS.OUT_FOR_DELIVERY]: [ORDER_STATUS.DELIVERED, ORDER_STATUS.CANCELLED],
+  [ORDER_STATUS.DELIVERED]: [],
+  [ORDER_STATUS.CANCELLED]: []
+};
+
+// Grind Types
+export const GRIND_TYPES = {
+  FINE: 'Fine',
+  MEDIUM: 'Medium',
+  COARSE: 'Coarse'
+};
+
+// Street Types
+export const STREET_TYPES = {
+  CENTER: 'Center',
+  TOP: 'Top',
+  DOWN_SIDE: 'Down side'
+};
+
+// Delivery Types
+export const DELIVERY_TYPES = {
+  PICKUP: 'Pickup',
+  DELIVERY: 'Delivery'
+};
+
+// User Roles
+export const USER_ROLES = {
+  CUSTOMER: 'customer',
+  ADMIN: 'admin'
+};
+
+// JWT Expiration
+export const JWT_EXPIRATION = {
+  CUSTOMER: process.env.JWT_EXPIRE || '7d',
+  ADMIN: process.env.ADMIN_JWT_EXPIRE || '24h'
+};
+
+// Rate Limiting
+export const RATE_LIMITS = {
+  LOGIN: {
+    WINDOW_MS: 15 * 60 * 1000, // 15 minutes
+    MAX_REQUESTS: 5
+  },
+  GENERAL: {
+    WINDOW_MS: 15 * 60 * 1000, // 15 minutes
+    MAX_REQUESTS: 100
+  },
+  ADMIN: {
+    WINDOW_MS: 15 * 60 * 1000, // 15 minutes
+    MAX_REQUESTS: 50
+  }
+};
+
+// Business Days for Estimated Ready Date
+export const BUSINESS_DAYS_FOR_ORDER = 2;
+
+// Pagination
+export const PAGINATION = {
+  DEFAULT_PAGE: 1,
+  DEFAULT_LIMIT: 20,
+  MAX_LIMIT: 100
+};
+
+// Error Codes
+export const ERROR_CODES = {
+  // Authentication
+  INVALID_TOKEN: 'INVALID_TOKEN',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
+  
+  // Authorization
+  FORBIDDEN: 'FORBIDDEN',
+  INVALID_ROLE: 'INVALID_ROLE',
+  
+  // Validation
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  INVALID_ORDER_TYPE: 'INVALID_ORDER_TYPE',
+  INVALID_STATUS_TRANSITION: 'INVALID_STATUS_TRANSITION',
+  MISSING_REQUIRED_FIELD: 'MISSING_REQUIRED_FIELD',
+  
+  // Resources
+  NOT_FOUND: 'NOT_FOUND',
+  PRODUCT_NOT_FOUND: 'PRODUCT_NOT_FOUND',
+  ORDER_NOT_FOUND: 'ORDER_NOT_FOUND',
+  CUSTOMER_NOT_FOUND: 'CUSTOMER_NOT_FOUND',
+  
+  // Business Logic
+  PRODUCT_INACTIVE: 'PRODUCT_INACTIVE',
+  CANNOT_CANCEL_ORDER: 'CANNOT_CANCEL_ORDER',
+  EMPTY_CART: 'EMPTY_CART',
+  STAFF_INACTIVE: 'STAFF_INACTIVE',
+  
+  // Server
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+  DATABASE_ERROR: 'DATABASE_ERROR'
+};
+
+// HTTP Status Codes
+export const HTTP_STATUS = {
+  OK: 200,
+  CREATED: 201,
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  UNPROCESSABLE_ENTITY: 422,
+  INTERNAL_SERVER_ERROR: 500
+};
