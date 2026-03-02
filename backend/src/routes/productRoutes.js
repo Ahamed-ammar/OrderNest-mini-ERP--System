@@ -1,0 +1,57 @@
+import express from 'express';
+import * as productController from '../controllers/productController.js';
+import { authenticate, requireAdmin } from '../middleware/authMiddleware.js';
+import {
+  validateProductId,
+  validateCreateProduct,
+  validateUpdateProduct
+} from '../validators/productValidator.js';
+
+const router = express.Router();
+
+/**
+ * Public routes (no authentication required)
+ */
+
+// GET /api/products - Get all active products for customers
+router.get('/', productController.getActiveProducts);
+
+// GET /api/products/:id - Get single product by ID
+router.get('/:id', validateProductId, productController.getProductById);
+
+/**
+ * Admin routes (authentication + admin role required)
+ */
+
+// GET /api/products/all - Get all products including inactive (admin only)
+router.get('/admin/all', authenticate, requireAdmin, productController.getAllProducts);
+
+// POST /api/products - Create new product (admin only)
+router.post(
+  '/',
+  authenticate,
+  requireAdmin,
+  validateCreateProduct,
+  productController.createProduct
+);
+
+// PUT /api/products/:id - Update product (admin only)
+router.put(
+  '/:id',
+  authenticate,
+  requireAdmin,
+  validateProductId,
+  validateUpdateProduct,
+  productController.updateProduct
+);
+
+// PATCH /api/products/:id/toggle - Toggle product active status (admin only)
+router.patch(
+  '/:id/toggle',
+  authenticate,
+  requireAdmin,
+  validateProductId,
+  productController.toggleProductStatus
+);
+
+export default router;
