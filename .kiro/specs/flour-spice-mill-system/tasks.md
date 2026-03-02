@@ -332,10 +332,13 @@
     - Display error toast on failure
     - _Requirements: 2.1, 2.2, 16.2, 16.3_
 
-- [-] 12. Build customer home page
+- [x] 12. Build customer home page
 
 
-  - [-] 12.1 Create home page layout and content
+
+
+  - [x] 12.1 Create home page layout and content
+
 
     - Display mill information and about section
     - Display products overview section
@@ -345,8 +348,24 @@
     - Ensure mobile-first responsive design
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 15.1, 15.2, 15.3, 15.4_
 
-- [ ] 13. Implement order flow - order type selection
-  - [ ] 13.1 Create cart context and hooks
+- [x] 13. Implement order flow - order type selection and cart management
+
+
+
+
+
+  - [x] 13.1 Create API service files for frontend
+
+
+    - Create productApi.js with functions to fetch products
+    - Create orderApi.js with functions to create, fetch, update, and cancel orders
+    - Create customerApi.js with functions to get/update profile
+    - Create adminApi.js with functions for dashboard, analytics, and reports
+    - Create deliveryStaffApi.js with functions to manage staff
+    - _Requirements: All requirements depend on API communication_
+
+  - [x] 13.2 Create cart context and hooks
+
     - Create CartContext to manage cart state (orderType, items, totalAmount)
     - Implement addToCart function with pricing calculation
     - Implement removeFromCart function
@@ -355,7 +374,9 @@
     - Implement resetCartOnTypeChange function
     - Create useCart hook for components
     - _Requirements: 4.3, 4.4, 5.5, 5.7_
-  - [ ] 13.2 Build order type selection page
+
+  - [x] 13.3 Build order type selection page
+
     - Create two large buttons for "Service Only" and "Buy + Grinding"
     - Display clear descriptions for each option
     - On selection, set orderType in cart context
@@ -364,70 +385,64 @@
     - Ensure mobile-friendly touch targets
     - _Requirements: 4.1, 4.2, 4.3, 4.5, 15.2_
 
-- [ ] 14. Implement order flow - product selection
-  - [ ] 14.1 Create product card component
-    - Display product name
-    - Display price per kg based on order type (grinding only or raw material + grinding)
-    - Create quantity input field (numeric keyboard on mobile)
-    - Create grind level selector (Fine/Medium/Coarse)
-    - Create "Add to Cart" button
-    - Validate quantity > 0 and grind level selected before adding
-    - _Requirements: 5.2, 5.3, 5.4, 5.6, 15.2_
-  - [ ] 14.2 Build product selection page
-    - Fetch active products from API on page load
-    - Display loading spinner while fetching
-    - Render product cards in responsive grid
-    - Display current cart summary at bottom (sticky on mobile)
-    - Show cart item count and total amount
-    - Create "Continue" button to proceed to address page
-    - Validate cart is not empty before allowing continuation
-    - _Requirements: 5.1, 5.2, 5.5, 5.7, 12.5, 15.4, 16.1_
+- [x] 14. Implement order flow - product selection
+
+
+
+
+
+  - [x] 14.1 Build product selection page with product cards
+
+    - Fetch active products from API on page load with loading state
+    - Display product cards in responsive grid with product name and price per kg based on order type
+    - Add quantity input field (numeric keyboard on mobile) and grind level selector (Fine/Medium/Coarse)
+    - Implement "Add to Cart" button with validation (quantity > 0 and grind level selected)
+    - Display current cart summary at bottom (sticky on mobile) with item count and total amount
+    - Add "Continue" button to proceed to address page with cart validation
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 12.5, 15.2, 15.4, 16.1_
 
 - [ ] 15. Implement order flow - address form
   - [ ] 15.1 Build address form page
-    - Create form with fields: name, phone, street type dropdown, house name, door number, landmark
-    - Pre-fill name and phone from customer profile
+    - Create form with fields: name, phone, street type dropdown (Center/Top/Down side), house name, door number, landmark
+    - Pre-fill name and phone from customer profile using customer API
     - Pre-fill address fields if customer has saved address
-    - Implement client-side validation for required fields
+    - Implement client-side validation for required fields (all except landmark)
     - Display validation errors inline with fields
-    - Create "Continue to Review" button
-    - Ensure large input fields for mobile
+    - Add "Continue to Review" button that validates and navigates to review page
+    - Ensure large input fields (16px minimum) for mobile to prevent zoom
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 8.4, 15.2, 16.5_
 
 - [ ] 16. Implement order flow - review and confirmation
-  - [ ] 16.1 Build order review page
+  - [ ] 16.1 Build order review and submission page
     - Display all cart items with product name, quantity, grind type, and price
     - Display price breakdown: item total, grinding charge, raw material cost (if applicable)
     - Display grand total prominently
-    - Display estimated ready date
+    - Display estimated ready date (2 business days)
     - Display delivery address
-    - Create "Confirm Order" button
-    - Show loading spinner during order submission
-    - _Requirements: 7.1, 7.2, 7.3, 7.4, 16.1, 16.4_
-  - [ ] 16.2 Implement order submission logic
+    - Add "Confirm Order" button with loading spinner during submission
     - Call POST /api/orders endpoint with cart data and address
-    - Handle success by clearing cart and navigating to success page
+    - Handle success by clearing cart and navigating to success page with order details
     - Handle errors by displaying toast notification
-    - _Requirements: 7.5, 16.2, 16.3_
-  - [ ] 16.3 Build order success page
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 16.1, 16.2, 16.3, 16.4_
+  - [ ] 16.2 Build order success page
     - Display order ID prominently
     - Display order summary (items, total)
     - Display status as "Pending"
     - Display estimated completion time
-    - Create "View Order History" button
-    - Create "Place Another Order" button
+    - Add "View Order History" button that navigates to order history page
+    - Add "Place Another Order" button that navigates to order type page
     - _Requirements: 7.6_
 
 - [ ] 17. Build customer order history page
-  - [ ] 17.1 Create order history card component
-    - Display order ID, date, status, and total amount
-    - Display order items summary
-    - Create "Reorder" button
-    - Create "Cancel" button (only for Pending status)
-    - _Requirements: 8.2, 9.1, 9.2, 9.3, 9.4_
-  - [ ] 17.2 Build order history page
-    - Fetch customer orders from API
+  - [ ] 17.1 Build order history page with reorder and cancel functionality
+    - Fetch customer orders from GET /api/customer/orders endpoint with loading state
     - Display last 5 orders prominently at top
+    - Display all orders below in reverse chronological order with order ID, date, status, total, and items summary
+    - Add "Reorder" button for each order that populates cart with order items and navigates to review page
+    - Add "Cancel" button for orders with "Pending" status that calls cancel endpoint
+    - Display success/error toasts for reorder and cancel actions
+    - Ensure mobile-friendly card layout
+    - _Requirements: 8.1, 8.2, 8.3, 9.1, 9.2, 9
     - Display all orders below in reverse chronological order
     - Show loading spinner while fetching
     - Implement reorder functionality that populates cart with order items
@@ -436,176 +451,136 @@
     - _Requirements: 8.1, 8.2, 8.3, 9.1, 9.2, 9.3, 9.4, 9.5, 16.1, 16.2, 16.3_
 
 - [ ] 18. Build admin dashboard page
-  - [ ] 18.1 Create dashboard metric cards
-    - Create card component for displaying single metric (title, value, icon)
-    - Display total orders today
-    - Display total revenue today
-    - Display pending orders count
-    - Ensure responsive layout for mobile and desktop
-    - _Requirements: 10.1, 10.2, 10.3, 15.1_
-  - [ ] 18.2 Create dashboard charts
-    - Implement chart component using Recharts or Chart.js
-    - Create orders chart for last 7 days (bar or line chart)
-    - Create revenue chart for last 7 days (bar or line chart)
-    - Ensure charts are responsive and mobile-friendly
-    - _Requirements: 10.4, 10.5, 15.1_
-  - [ ] 18.3 Build admin dashboard page layout
-    - Fetch dashboard data from API on page load
-    - Display loading spinner while fetching
-    - Render metric cards in grid layout
-    - Render charts below metrics
+  - [ ] 18.1 Build admin dashboard page with metrics and charts
+    - Fetch dashboard data from GET /api/admin/dashboard endpoint with loading state
+    - Create metric cards displaying total orders today, total revenue today, and pending orders count
+    - Implement charts using Recharts for orders and revenue over last 7 days
+    - Ensure responsive layout for mobile and desktop (cards in grid, charts stacked on mobile)
     - Handle errors with toast notifications
-    - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 16.1, 16.2, 16.3_
+    - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 15.1, 16.1, 16.2, 16.3_
 
 - [ ] 19. Build admin order management page
-  - [ ] 19.1 Create order table component
-    - Display orders in table format with columns: Order ID, Customer, Date, Status, Total, Actions
-    - Make table responsive (card layout on mobile)
-    - Create status badge component with color coding
-    - Create action buttons for status update and staff assignment
-    - _Requirements: 11.1, 15.1_
-  - [ ] 19.2 Implement order filtering
-    - Create filter controls for status, date range, and delivery type
-    - Fetch filtered orders from API when filters change
-    - Display loading spinner during fetch
-    - _Requirements: 11.2, 11.3, 16.1_
-  - [ ] 19.3 Implement order status update modal
-    - Create modal with status dropdown
-    - Populate dropdown with valid next statuses based on current status
-    - Call status update API endpoint on submit
-    - Refresh order list on success
-    - Display error toast for invalid transitions
-    - _Requirements: 11.4, 11.5, 11.6, 16.2, 16.3_
-  - [ ] 19.4 Build complete order management page
-    - Integrate order table, filters, and modals
-    - Fetch all orders on page load
-    - Handle loading and error states
-    - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6_
+  - [ ] 19.1 Build order management page with filtering and status updates
+    - Fetch all orders from GET /api/orders endpoint with loading state
+    - Display orders in responsive table/card layout with columns: Order ID, Customer, Date, Status, Total, Actions
+    - Create status badge component with color coding for different statuses
+    - Implement filter controls for status, date range, and delivery type that refetch orders
+    - Create status update modal with dropdown showing valid next statuses based on current status
+    - Call PUT /api/orders/:id/status endpoint on status update and refresh order list
+    - Create staff assignment modal that calls PUT /api/orders/:id/assign-staff endpoint
+    - Display error toast for invalid status transitions
+    - Make table responsive with card layout on mobile
+    - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 15.1, 16.1, 16.2, 16.3_
 
 - [ ] 20. Build admin product management page
-  - [ ] 20.1 Create product form component
-    - Create form with fields: name, raw material price, grinding charge
+  - [ ] 20.1 Build product management page with CRUD operations
+    - Fetch products from GET /api/products endpoint on page load with loading state
+    - Display products in responsive table/card with columns: Name, Raw Material Price, Grinding Charge, Status, Actions
+    - Add "Add Product" button that opens form modal
+    - Create product form modal with fields: name, raw material price, grinding charge
     - Implement validation for required fields and positive numbers
-    - Support both create and edit modes
-    - _Requirements: 12.1, 12.2, 17.1_
-  - [ ] 20.2 Create product table component
-    - Display products in table with columns: Name, Raw Material Price, Grinding Charge, Status, Actions
-    - Create toggle switch for active/inactive status
-    - Create edit and delete buttons
-    - Make table responsive for mobile
-    - _Requirements: 12.3, 12.4, 15.1_
-  - [ ] 20.3 Build product management page
-    - Display "Add Product" button that opens form modal
-    - Display product table
-    - Implement add product functionality
-    - Implement edit product functionality
-    - Implement toggle active status functionality
-    - Fetch products on page load and after mutations
+    - Support both create (POST /api/products) and edit (PUT /api/products/:id) modes in same form
+    - Add toggle switch for active/inactive status that calls PATCH /api/products/:id/toggle
+    - Add edit button that opens form modal with pre-filled data
+    - Refresh product list after mutations
     - Handle loading and error states with spinners and toasts
-    - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 16.1, 16.2, 16.3_
+    - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 15.1, 16.1, 16.2, 16.3, 17.1_
 
 - [ ] 21. Build admin delivery staff management page
-  - [ ] 21.1 Create staff form component
-    - Create form with fields: name, phone
-    - Implement validation for required fields and phone format
-    - Support both create and edit modes
-    - _Requirements: 13.1, 17.1_
-  - [ ] 21.2 Create staff table component
-    - Display staff in table with columns: Name, Phone, Status, Deliveries, Actions
-    - Create toggle switch for active/inactive status
-    - Create edit button
-    - Display delivery count for each staff member
-    - Make table responsive for mobile
-    - _Requirements: 13.2, 13.3, 13.5, 15.1_
-  - [ ] 21.3 Build staff management page
-    - Display "Add Staff" button that opens form modal
-    - Display staff table
-    - Implement add staff functionality
-    - Implement edit staff functionality
-    - Implement toggle active status functionality
-    - Fetch staff on page load and after mutations
-    - Handle loading and error states
-    - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 16.1, 16.2, 16.3_
+  - [ ] 21.1 Build staff management page with CRUD operations
+    - Fetch staff from GET /api/delivery-staff endpoint on page load with loading state
+    - Display staff in responsive table/card with columns: Name, Phone, Status, Deliveries, Actions
+    - Add "Add Staff" button that opens form modal
+    - Create staff form modal with fields: name, phone
+    - Implement validation for required fields and phone format (10 digits)
+    - Support both create (POST /api/delivery-staff) and edit (PUT /api/delivery-staff/:id) modes in same form
+    - Add toggle switch for active/inactive status that calls PATCH /api/delivery-staff/:id/toggle
+    - Display delivery count for each staff member from GET /api/delivery-staff/:id/deliveries
+    - Add edit button that opens form modal with pre-filled data
+    - Refresh staff list after mutations
+    - Handle loading and error states with spinners and toasts
+    - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 15.1, 16.1, 16.2, 16.3, 17.1_
 
 - [ ] 22. Build admin reports page
-  - [ ] 22.1 Create report filters component
-    - Create date range picker for filtering
-    - Create "Export CSV" button
-    - _Requirements: 14.1, 14.2_
-  - [ ] 22.2 Create analytics display components
-    - Create component to display most ordered products
-    - Create component to display pickup vs delivery percentage with visual representation
-    - _Requirements: 14.3, 14.4_
-  - [ ] 22.3 Implement CSV export functionality
-    - Call export API endpoint with date filters
-    - Trigger browser download of CSV file
-    - Display success/error toast
-    - _Requirements: 14.2, 16.2, 16.3_
-  - [ ] 22.4 Build complete reports page
-    - Integrate filters and analytics components
-    - Fetch analytics data based on selected filters
-    - Handle loading and error states
-    - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 16.1_
+  - [ ] 22.1 Build reports page with analytics and CSV export
+    - Create date range picker for filtering analytics data
+    - Fetch analytics data from GET /api/admin/analytics/revenue endpoint based on selected date range
+    - Display most ordered products with visual representation (list or chart)
+    - Display pickup vs delivery percentage with visual representation (pie chart or progress bars)
+    - Add "Export CSV" button that calls GET /api/admin/reports/export endpoint with date filters
+    - Trigger browser download of CSV file on successful export
+    - Display success/error toast for export action
+    - Handle loading states while fetching analytics
+    - Ensure responsive layout for mobile
+    - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 16.1, 16.2, 16.3_
 
-- [ ] 23. Create reusable UI components
-  - [ ] 23.1 Build common components
-    - Create Button component with variants (primary, secondary, danger)
-    - Create Input component with validation error display
-    - Create Loader/Spinner component
-    - Create Modal component
-    - Create Toast notification system
-    - Ensure all components follow mobile-first design principles
-    - _Requirements: 15.2, 15.3, 16.1, 16.2, 16.3, 16.4, 16.5_
+- [x] 23. Create reusable UI components and implement toast notifications
+  - [x] 23.1 Set up toast notification system
+    - Install and configure react-toastify
+    - Create toast configuration in main.jsx
+    - Add ToastContainer to main.jsx
+    - Configure axios interceptors to show toast on errors
+    - _Requirements: 16.2, 16.3_
+  - [x] 23.2 Build Modal component
+    - Create Modal component with title, content, confirm, and cancel actions
+    - Ensure mobile-friendly design
+    - _Requirements: 15.2, 15.3, 16.1, 16.4, 16.5_
+  - [ ] 23.3 Build additional common components
+    - Create Button component with variants (primary, secondary, danger) for consistent styling
+    - Create Input component with validation error display for forms
+    - Create Loader/Spinner component for loading states
+    - Ensure all components follow mobile-first design principles with large touch targets
+    - _Requirements: 15.2, 15.3, 16.1, 16.4, 16.5_
 
 - [ ] 24. Implement mobile-specific optimizations
   - [ ] 24.1 Add mobile navigation and UI enhancements
-    - Create bottom navigation bar for customer app
-    - Implement hamburger menu for secondary navigation
-    - Add sticky cart button with item count badge on mobile
+    - Create bottom navigation bar for customer app with icons for Home, Orders, Profile
+    - Implement hamburger menu for admin secondary navigation
     - Ensure all touch targets are minimum 44x44px
-    - Test and adjust spacing between interactive elements
+    - Test and adjust spacing between interactive elements (minimum 8px)
+    - Add sticky cart summary on product selection page for mobile
     - _Requirements: 15.2, 15.4_
   - [ ] 24.2 Optimize forms for mobile
-    - Set input type="tel" for phone number fields
+    - Set input type="tel" for phone number fields to trigger numeric keyboard
     - Set input type="number" for quantity fields
-    - Ensure font size is 16px minimum to prevent zoom
-    - Implement progressive disclosure for multi-step forms
-    - Add clear progress indicators
+    - Ensure font size is 16px minimum on all inputs to prevent iOS zoom
+    - Add clear progress indicators for multi-step order flow
+    - Test form usability on mobile devices
     - _Requirements: 15.2_
 
-- [ ] 25. Set up environment configuration and deployment preparation
-  - [ ] 25.1 Configure environment variables
-    - Create .env.example files for both frontend and backend
-    - Document all required environment variables
-    - Set up environment-specific configurations
+- [ ] 25. Finalize deployment preparation and documentation
+  - [ ] 25.1 Verify and update environment configuration
+    - Ensure .env.example files are up to date for both frontend and backend
+    - Document all required environment variables with descriptions
+    - Verify environment-specific configurations are correct (CORS, API URLs)
     - _Requirements: 17.6_
-  - [ ] 25.2 Prepare backend for deployment
-    - Configure production MongoDB connection
-    - Set up CORS for production frontend URL
-    - Configure rate limiting for production
-    - Add compression middleware
-    - Create production start script
+  - [ ] 25.2 Optimize backend for production
+    - Verify production MongoDB connection configuration
+    - Verify CORS configuration for production frontend URL
+    - Verify rate limiting configuration for production load
+    - Add compression middleware if not already present
+    - Verify production start script exists in package.json
     - _Requirements: 17.5, 17.6_
-  - [ ] 25.3 Prepare frontend for deployment
-    - Configure production API URL
-    - Optimize build configuration in vite.config.js
-    - Set up code splitting for lazy loading
-    - Configure production environment variables
+  - [ ] 25.3 Optimize frontend for production
+    - Verify production API URL configuration in .env
+    - Review and optimize build configuration in vite.config.js
+    - Test production build locally with npm run build and npm run preview
+    - Verify all environment variables are properly configured
     - _Requirements: 17.6_
   - [ ] 25.4 Create deployment documentation
-    - Document deployment steps for Render (backend)
-    - Document deployment steps for Vercel (frontend)
-    - Document MongoDB Atlas setup steps
-    - Create production checklist
+    - Document deployment steps for Render (backend) with environment variables
+    - Document deployment steps for Vercel (frontend) with environment variables
+    - Document MongoDB Atlas setup steps and connection string format
+    - Create production deployment checklist
     - _Requirements: All requirements depend on successful deployment_
 
-- [ ] 26. Create initial admin user and seed data
-  - [ ] 26.1 Create database seeding script
+- [x] 26. Create initial admin user and seed data
+  - [x] 26.1 Create database seeding script
     - Write script to create initial admin user with hashed password
     - Write script to create sample products
     - Add script to package.json
     - _Requirements: 2.3, 12.1_
-  - [ ] 26.2 Run seeding script
+  - [x] 26.2 Run seeding script
     - Execute seeding script to populate initial data
     - Verify admin can login
     - Verify products appear in customer view

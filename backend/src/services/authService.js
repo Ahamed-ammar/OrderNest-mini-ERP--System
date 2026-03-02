@@ -5,9 +5,124 @@ import { generateToken } from '../utils/jwtUtils.js';
 import { USER_ROLES, ERROR_CODES } from '../config/constants.js';
 
 /**
- * Customer login or register service
- * If phone exists, return existing customer
- * If phone doesn't exist, create new customer
+ * Customer registration service
+ * Creates a new customer with username, email, and password
+ */
+export const customerRegister = async ({ username, email, password, name }) => {
+  try {
+    // Check if username already exists
+    const existingUsername = await Customer.findOne({ username: username.toLowerCase() });
+    if (existingUsername) {
+      const error = new Error('Username already taken');
+      error.code = ERROR_CODES.DUPLICATE_ENTRY;
+      throw error;
+    }
+
+    // Check if email already exists
+    const existingEmail = await Customer.findOne({ email: email.toLowerCase() });
+    if (existingEmail) {
+      const error = new Error('Email already registered');
+      error.code = ERROR_CODES.DUPLICATE_ENTRY;
+      throw error;
+    }
+
+    // Hash password
+    const hashedPassword = await hashPassword(password);
+
+    // Create new customer
+    const customer = await Customer.create({
+      username: username.toLowerCase(),
+      email: email.toLowerCase(),
+      password: hashedPassword,
+      name: name || username
+    });
+
+    // Generate token
+    const token = generateToken({
+      userId: customer._id.toString(),
+      role: USER_ROLES.CUSTOMER
+    });
+
+    return {
+      success: true,
+      customer: {
+        id: customer._id,
+        username: customer.username,
+        email: customer.email,
+        name: customer.name,
+        role: customer.role
+      },
+      token
+    };
+  } catch (error) {
+    if (error.code === 11000) {
+      // Duplicate key error
+      const field = Object.keys(error.keyPattern)[0];
+      throw new Error(`${field.charAt(0).toUpperCase() + field.slice(1)} already exists`);
+    }
+    throw error;
+  }
+};
+
+/**
+ * Customer login service
+ * Validates credentials (username/email + password) and returns token
+ */
+export const customerLogin = async ({ usernameOrEmail, password }) => {
+  try {
+    // Find customer by username or email
+    const customer = await Customer.findOne({
+      $or: [
+        { username: usernameOrEmail.toLowerCase() },
+        { email: usernameOrEmail.toLowerCase() }
+      ]
+    }).select('+password');
+
+    if (!customer) {
+      const error = new Error('Invalid credentials');
+      error.code = ERROR_CODES.INVALID_CREDENTIALS;
+      throw error;
+    }
+
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, customer.password);
+
+    if (!isPasswordValid) {
+      const error = new Error('Invalid credentials');
+      error.code = ERROR_CODES.INVALID_CREDENTIALS;
+      throw error;
+    }
+
+    // Generate token
+    const token = generateToken({
+      userId: customer._id.toString(),
+      role: USER_ROLES.CUSTOMER
+    });
+
+    return {
+      success: true,
+      customer: {
+        id: customer._id,
+        username: customer.username,
+        email: customer.email,
+        name: customer.name,
+        phone: customer.phone,
+        streetType: customer.streetType,
+        houseName: customer.houseName,
+        doorNo: customer.doorNo,
+        landmark: customer.landmark,
+        role: customer.role
+      },
+      token
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * Legacy: Customer login or register service (phone-based)
+ * Keeping for backward compatibility if needed
  */
 export const customerLoginOrRegister = async ({ phone, name }) => {
   try {
@@ -28,6 +143,8 @@ export const customerLoginOrRegister = async ({ phone, name }) => {
           id: customer._id,
           name: customer.name,
           phone: customer.phone,
+          username: customer.username,
+          email: customer.email,
           streetType: customer.streetType,
           houseName: customer.houseName,
           doorNo: customer.doorNo,
@@ -37,37 +154,11 @@ export const customerLoginOrRegister = async ({ phone, name }) => {
         token
       };
     } else {
-      // New customer - register
-      // Use provided name or default to phone number
-      const customerName = name || `Customer ${phone}`;
-      
-      customer = await Customer.create({
-        name: customerName,
-        phone
-      });
-
-      const token = generateToken({
-        userId: customer._id.toString(),
-        role: USER_ROLES.CUSTOMER
-      });
-
-      return {
-        success: true,
-        isNewCustomer: true,
-        customer: {
-          id: customer._id,
-          name: customer.name,
-          phone: customer.phone,
-          role: customer.role
-        },
-        token
-      };
+      const error = new Error('Phone-based registration is deprecated. Please use signup with username, email, and password.');
+      error.code = ERROR_CODES.INVALID_REQUEST;
+      throw error;
     }
   } catch (error) {
-    if (error.code === 11000) {
-      // Duplicate key error (shouldn't happen with our logic, but just in case)
-      throw new Error('Phone number already registered');
-    }
     throw error;
   }
 };

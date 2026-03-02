@@ -1,9 +1,91 @@
-import { customerLoginOrRegister, adminLogin } from '../services/authService.js';
+import { customerRegister, customerLogin, customerLoginOrRegister, adminLogin } from '../services/authService.js';
 import { ERROR_CODES, HTTP_STATUS } from '../config/constants.js';
 
 /**
- * Customer login/register controller
+ * Customer registration controller
+ * POST /api/auth/customer/register
+ */
+export const customerRegisterController = async (req, res) => {
+  try {
+    const { username, email, password, name } = req.body;
+
+    const result = await customerRegister({ username, email, password, name });
+
+    return res.status(HTTP_STATUS.CREATED).json({
+      success: true,
+      message: 'Account created successfully',
+      data: {
+        customer: result.customer,
+        token: result.token
+      }
+    });
+  } catch (error) {
+    console.error('Customer registration error:', error);
+    
+    if (error.code === ERROR_CODES.DUPLICATE_ENTRY) {
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        success: false,
+        error: {
+          code: ERROR_CODES.DUPLICATE_ENTRY,
+          message: error.message
+        }
+      });
+    }
+
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      error: {
+        code: ERROR_CODES.INTERNAL_ERROR,
+        message: error.message || 'Registration failed'
+      }
+    });
+  }
+};
+
+/**
+ * Customer login controller
  * POST /api/auth/customer/login
+ */
+export const customerLoginController = async (req, res) => {
+  try {
+    const { usernameOrEmail, password } = req.body;
+
+    const result = await customerLogin({ usernameOrEmail, password });
+
+    return res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: 'Login successful',
+      data: {
+        customer: result.customer,
+        token: result.token
+      }
+    });
+  } catch (error) {
+    console.error('Customer login error:', error);
+    
+    if (error.code === ERROR_CODES.INVALID_CREDENTIALS) {
+      return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+        success: false,
+        error: {
+          code: ERROR_CODES.INVALID_CREDENTIALS,
+          message: 'Invalid username/email or password'
+        }
+      });
+    }
+
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      error: {
+        code: ERROR_CODES.INTERNAL_ERROR,
+        message: 'Login failed'
+      }
+    });
+  }
+};
+
+/**
+ * Legacy: Customer login/register controller (phone-based)
+ * POST /api/auth/customer/login-phone
  */
 export const customerAuth = async (req, res) => {
   try {

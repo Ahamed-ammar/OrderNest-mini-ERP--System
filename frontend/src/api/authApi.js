@@ -1,8 +1,28 @@
 import axiosInstance from './axiosConfig';
 
-// Customer login/register by phone
-export const customerLogin = async (phone) => {
-  const response = await axiosInstance.post('/auth/customer/login', { phone });
+// Customer registration
+export const customerRegister = async (username, email, password, name) => {
+  const response = await axiosInstance.post('/auth/customer/register', { 
+    username, 
+    email, 
+    password,
+    name 
+  });
+  return response.data;
+};
+
+// Customer login with username/email and password
+export const customerLogin = async (usernameOrEmail, password) => {
+  const response = await axiosInstance.post('/auth/customer/login', { 
+    usernameOrEmail, 
+    password 
+  });
+  return response.data;
+};
+
+// Legacy: Customer login/register by phone
+export const customerPhoneLogin = async (phone) => {
+  const response = await axiosInstance.post('/auth/customer/login-phone', { phone });
   return response.data;
 };
 

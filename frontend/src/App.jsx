@@ -6,6 +6,7 @@ import AdminRoute from './routes/AdminRoute';
 // Customer Pages
 import HomePage from './pages/customer/HomePage';
 import LoginPage from './pages/customer/LoginPage';
+import SignupPage from './pages/customer/SignupPage';
 import OrderTypePage from './pages/customer/OrderTypePage';
 import ProductSelectionPage from './pages/customer/ProductSelectionPage';
 import AddressPage from './pages/customer/AddressPage';
@@ -25,18 +26,10 @@ function App() {
   return (
     <Routes>
       {/* Public Routes */}
+      <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
       <Route path="/admin/login" element={<AdminLoginPage />} />
-
-      {/* Protected Customer Routes */}
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <HomePage />
-          </ProtectedRoute>
-        }
-      />
       <Route
         path="/order/type"
         element={
