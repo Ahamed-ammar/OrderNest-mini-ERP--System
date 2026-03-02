@@ -215,8 +215,10 @@
     - Update order with deliveryStaffId
     - _Requirements: 13.4_
 
-- [ ] 8. Implement admin dashboard and analytics
-  - [ ] 8.1 Create analytics service layer
+- [x] 8. Implement admin dashboard and analytics
+
+
+  - [x] 8.1 Create analytics service layer
     - Write function to count orders for today
     - Write function to calculate revenue for today
     - Write function to count pending orders
@@ -224,77 +226,117 @@
     - Write function to get revenue for last 7 days
     - Write function to calculate most ordered products
     - Write function to calculate pickup vs delivery percentage
+
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 14.3, 14.4_
-  - [ ] 8.2 Create admin dashboard endpoint
+  - [x] 8.2 Create admin dashboard endpoint
+
     - Create GET /api/admin/dashboard endpoint
     - Return all dashboard metrics in single response
     - Apply admin authentication middleware
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
-  - [ ] 8.3 Implement reporting endpoints
+
+  - [x] 8.3 Implement reporting endpoints
+
     - Create GET /api/admin/analytics/revenue endpoint with date filtering
     - Create GET /api/admin/reports/export endpoint to generate CSV
     - Implement date range filtering logic
     - _Requirements: 14.1, 14.2, 14.5_
 
-- [ ] 9. Add error handling and security middleware
-  - [ ] 9.1 Create global error handler middleware
+- [x] 9. Add error handling and security middleware
+
+
+
+
+
+
+  - [x] 9.1 Create global error handler middleware
+
     - Write centralized error handling middleware
     - Map error types to appropriate HTTP status codes
     - Return consistent error response format
     - Avoid exposing sensitive information in error messages
     - _Requirements: 17.4_
-  - [ ] 9.2 Implement rate limiting middleware
+
+
+  - [x] 9.2 Implement rate limiting middleware
+
     - Configure rate limiter for login endpoints (5 requests per 15 minutes)
     - Configure rate limiter for general API (100 requests per 15 minutes)
     - Configure rate limiter for admin endpoints (50 requests per 15 minutes)
     - _Requirements: 2.5, 17.2_
-  - [ ] 9.3 Configure CORS and security headers
+  - [x] 9.3 Configure CORS and security headers
+
+
     - Set up CORS with frontend URL from environment variable
     - Enable credentials for CORS
     - _Requirements: 17.5_
 
-- [ ] 10. Build frontend authentication and routing
-  - [ ] 10.1 Set up Axios configuration with interceptors
+- [x] 10. Build frontend authentication and routing
+
+
+
+
+  - [x] 10.1 Set up Axios configuration with interceptors
+
+
     - Create axios instance with base URL from environment
     - Add request interceptor to attach JWT token to headers
     - Add response interceptor to handle 401 errors and redirect to login
     - Add response interceptor for global error toast notifications
     - _Requirements: 1.3, 16.2, 16.3_
-  - [ ] 10.2 Create authentication context and hooks
+  - [x] 10.2 Create authentication context and hooks
+
+
     - Create AuthContext to manage user state and JWT token
     - Implement login function that stores token in localStorage
     - Implement logout function that clears token and redirects
     - Create useAuth hook for components to access auth state
     - _Requirements: 1.3, 1.4_
-  - [ ] 10.3 Implement protected route components
+  - [x] 10.3 Implement protected route components
+
+
     - Create ProtectedRoute component that checks authentication
     - Create AdminRoute component that checks admin role
     - Redirect unauthenticated users to login page
     - _Requirements: 1.4, 2.4_
-  - [ ] 10.4 Set up React Router with all routes
+  - [x] 10.4 Set up React Router with all routes
+
+
     - Configure routes for customer pages (home, login, order flow, history)
     - Configure routes for admin pages (login, dashboard, management pages)
     - Apply ProtectedRoute to customer routes
     - Apply AdminRoute to admin routes
     - _Requirements: 1.4, 2.4_
 
-- [ ] 11. Create customer authentication pages
-  - [ ] 11.1 Build customer login page
+- [x] 11. Create customer authentication pages
+
+
+
+
+
+
+  - [x] 11.1 Build customer login page
+
     - Create form with phone number input
     - Implement phone number validation (10 digits)
     - Call customer login API endpoint
     - Store JWT token and redirect to home page on success
     - Display error toast on failure
     - _Requirements: 1.1, 1.2, 1.5, 16.2, 16.3_
-  - [ ] 11.2 Build admin login page
+
+  - [x] 11.2 Build admin login page
+
     - Create form with username and password inputs
     - Call admin login API endpoint
     - Store JWT token and redirect to admin dashboard on success
     - Display error toast on failure
     - _Requirements: 2.1, 2.2, 16.2, 16.3_
 
-- [ ] 12. Build customer home page
-  - [ ] 12.1 Create home page layout and content
+- [-] 12. Build customer home page
+
+
+  - [-] 12.1 Create home page layout and content
+
     - Display mill information and about section
     - Display products overview section
     - Display offers and advertisements section

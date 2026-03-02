@@ -1,15 +1,136 @@
 import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import ProtectedRoute from './routes/ProtectedRoute';
+import AdminRoute from './routes/AdminRoute';
+
+// Customer Pages
+import HomePage from './pages/customer/HomePage';
+import LoginPage from './pages/customer/LoginPage';
+import OrderTypePage from './pages/customer/OrderTypePage';
+import ProductSelectionPage from './pages/customer/ProductSelectionPage';
+import AddressPage from './pages/customer/AddressPage';
+import ReviewPage from './pages/customer/ReviewPage';
+import SuccessPage from './pages/customer/SuccessPage';
+import OrderHistoryPage from './pages/customer/OrderHistoryPage';
+
+// Admin Pages
+import AdminLoginPage from './pages/admin/AdminLoginPage';
+import DashboardPage from './pages/admin/DashboardPage';
+import OrderManagementPage from './pages/admin/OrderManagementPage';
+import ProductManagementPage from './pages/admin/ProductManagementPage';
+import StaffManagementPage from './pages/admin/StaffManagementPage';
+import ReportsPage from './pages/admin/ReportsPage';
 
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-primary-600 mb-4">
-          Flour & Spice Mill
-        </h1>
-        <p className="text-gray-600">Order Management System</p>
-      </div>
-    </div>
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/admin/login" element={<AdminLoginPage />} />
+
+      {/* Protected Customer Routes */}
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/order/type"
+        element={
+          <ProtectedRoute>
+            <OrderTypePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/order/products"
+        element={
+          <ProtectedRoute>
+            <ProductSelectionPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/order/address"
+        element={
+          <ProtectedRoute>
+            <AddressPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/order/review"
+        element={
+          <ProtectedRoute>
+            <ReviewPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/order/success"
+        element={
+          <ProtectedRoute>
+            <SuccessPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/orders"
+        element={
+          <ProtectedRoute>
+            <OrderHistoryPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Protected Admin Routes */}
+      <Route
+        path="/admin/dashboard"
+        element={
+          <AdminRoute>
+            <DashboardPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/orders"
+        element={
+          <AdminRoute>
+            <OrderManagementPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/products"
+        element={
+          <AdminRoute>
+            <ProductManagementPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/staff"
+        element={
+          <AdminRoute>
+            <StaffManagementPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/reports"
+        element={
+          <AdminRoute>
+            <ReportsPage />
+          </AdminRoute>
+        }
+      />
+
+      {/* Catch all - redirect to home */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 
