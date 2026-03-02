@@ -4,6 +4,8 @@ import compression from 'compression';
 import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import customerRoutes from './routes/customerRoutes.js';
+import deliveryStaffRoutes from './routes/deliveryStaffRoutes.js';
 
 const app = express();
 
@@ -25,6 +27,8 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/customer', customerRoutes);
+app.use('/api/delivery-staff', deliveryStaffRoutes);
 
 // 404 handler
 app.use((req, res) => {

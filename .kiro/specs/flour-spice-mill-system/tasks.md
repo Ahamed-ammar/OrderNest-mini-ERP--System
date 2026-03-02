@@ -41,7 +41,11 @@
     - Create DeliveryStaff model with phone unique index
     - _Requirements: 1.1, 1.2, 5.1, 12.1, 13.1, 18.1, 18.2_
 
-- [ ] 3. Implement authentication system
+- [x] 3. Implement authentication system
+
+
+
+
 
 
 
@@ -78,14 +82,22 @@
     - Return JWT token with admin role on successful login
     - Implement rate limiting on admin login endpoint
     - _Requirements: 2.1, 2.2, 2.3, 2.5_
+-
 
-- [ ] 4. Create product management system
-  - [ ] 4.1 Implement product service layer
+- [x] 4. Create product management system
+
+
+
+  - [x] 4.1 Implement product service layer
+
+
     - Write functions to create, read, update products
     - Write function to toggle product active status
     - Implement logic to filter only active products for customers
     - _Requirements: 12.1, 12.2, 12.3, 12.4_
-  - [ ] 4.2 Create product API endpoints
+  - [x] 4.2 Create product API endpoints
+
+
     - Create GET /api/products endpoint to fetch all active products
     - Create GET /api/products/:id endpoint for single product
     - Create POST /api/products endpoint for admin to add products
@@ -93,20 +105,30 @@
     - Create PATCH /api/products/:id/toggle endpoint for admin to enable/disable products
     - Apply admin authentication middleware to admin-only endpoints
     - _Requirements: 5.1, 12.1, 12.2, 12.3, 12.4, 12.5_
-  - [ ] 4.3 Implement input validation for product endpoints
+  - [x] 4.3 Implement input validation for product endpoints
+
+
     - Validate product name, rawMaterialPricePerKg, and grindingChargePerKg
     - Ensure prices are non-negative numbers
     - Validate ObjectId format for product ID parameter
     - _Requirements: 17.1_
 
-- [ ] 5. Build order creation and management system
-  - [ ] 5.1 Create order service layer with pricing logic
+- [x] 5. Build order creation and management system
+
+
+
+
+  - [x] 5.1 Create order service layer with pricing logic
+
+
     - Write function to calculate item total based on order type (serviceOnly vs buyAndService)
     - Write function to calculate order grand total
     - Write function to create price snapshots from current product prices
     - Write function to calculate estimated ready date (2 business days)
     - _Requirements: 5.3, 5.4, 7.2, 7.4, 18.1, 18.2_
-  - [ ] 5.2 Implement order creation endpoint
+  - [x] 5.2 Implement order creation endpoint
+
+
     - Create POST /api/orders endpoint for customers
     - Validate cart has items and all required fields are present
     - Fetch current product prices and create snapshots
@@ -114,48 +136,69 @@
     - Save order with status "Pending" and estimated ready date
     - Return order ID, summary, and estimated completion time
     - _Requirements: 5.5, 5.6, 6.2, 7.5, 7.6, 18.1, 18.2, 18.3_
-  - [ ] 5.3 Create order retrieval endpoints
+  - [x] 5.3 Create order retrieval endpoints
+
     - Create GET /api/customer/orders endpoint to fetch customer's order history
     - Create GET /api/orders/:id endpoint to fetch single order details
     - Create GET /api/orders endpoint for admin to fetch all orders with filters
     - Implement filtering by status, date range, and delivery type
     - _Requirements: 9.1, 11.1, 11.2, 11.3_
-  - [ ] 5.4 Implement order status update with workflow validation
+  - [x] 5.4 Implement order status update with workflow validation
+
     - Create PUT /api/orders/:id/status endpoint for admin
     - Implement status transition validation logic (Pending → InProgress → Ready → OutForDelivery → Delivered)
     - Allow Cancelled from any non-terminal state
     - Return error for invalid transitions
     - _Requirements: 11.4, 11.5, 11.6_
-  - [ ] 5.5 Create order cancellation endpoint
+  - [x] 5.5 Create order cancellation endpoint
+
     - Create PUT /api/customer/orders/:id/cancel endpoint
     - Validate order belongs to authenticated customer
     - Validate order status is "Pending"
     - Update status to "Cancelled"
     - _Requirements: 9.4, 9.5_
-  - [ ] 5.6 Implement input validation for order endpoints
+  - [x] 5.6 Implement input validation for order endpoints
+
+
     - Validate order type is either "serviceOnly" or "buyAndService"
     - Validate each item has productId, quantity > 0, and valid grindType
     - Validate address fields (all required except landmark)
     - Validate status transitions
     - _Requirements: 17.1_
 
-- [ ] 6. Implement customer profile and repeat order features
-  - [ ] 6.1 Create customer profile endpoints
+- [x] 6. Implement customer profile and repeat order features
+
+
+
+
+  - [x] 6.1 Create customer profile endpoints
+
+
     - Create GET /api/customer/profile endpoint to fetch customer data
     - Create PUT /api/customer/profile endpoint to update address information
     - _Requirements: 6.4, 8.4_
-  - [ ] 6.2 Implement order history with reorder functionality
+  - [x] 6.2 Implement order history with reorder functionality
+
+
     - Modify GET /api/customer/orders to return last 5 orders prominently
     - Include all order details needed for reorder (items, quantities, grind types)
     - _Requirements: 8.1, 8.2, 8.3, 9.2, 9.3_
 
-- [ ] 7. Build delivery staff management system
-  - [ ] 7.1 Create delivery staff service layer
+- [x] 7. Build delivery staff management system
+
+
+
+
+  - [x] 7.1 Create delivery staff service layer
+
+
     - Write functions to create, read, update delivery staff
     - Write function to toggle staff active status
     - Write function to count deliveries per staff member
     - _Requirements: 13.1, 13.2, 13.3, 13.5_
-  - [ ] 7.2 Implement delivery staff API endpoints
+  - [x] 7.2 Implement delivery staff API endpoints
+
+
     - Create GET /api/delivery-staff endpoint for admin
     - Create POST /api/delivery-staff endpoint to add new staff
     - Create PUT /api/delivery-staff/:id endpoint to update staff
@@ -163,7 +206,9 @@
     - Create GET /api/delivery-staff/:id/deliveries endpoint to get delivery count
     - Apply admin authentication middleware to all endpoints
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5_
-  - [ ] 7.3 Create staff assignment endpoint
+  - [x] 7.3 Create staff assignment endpoint
+
+
     - Create PUT /api/orders/:id/assign-staff endpoint for admin
     - Validate staff is active before assignment
     - Validate order status is appropriate for delivery assignment

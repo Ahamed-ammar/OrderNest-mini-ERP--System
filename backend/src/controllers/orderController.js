@@ -137,9 +137,16 @@ export const getCustomerOrders = async (req, res) => {
       .sort({ createdAt: -1 })
       .populate('deliveryStaffId', 'name phone');
 
+    // Separate last 5 orders for prominent display
+    const recentOrders = orders.slice(0, 5);
+    const allOrders = orders;
+
     return res.status(HTTP_STATUS.OK).json({
       success: true,
-      data: orders
+      data: {
+        recentOrders,
+        allOrders
+      }
     });
   } catch (error) {
     console.error('Error fetching customer orders:', error);
@@ -383,6 +390,89 @@ export const cancelOrder = async (req, res) => {
       error: {
         code: ERROR_CODES.INTERNAL_ERROR,
         message: 'Failed to cancel order. Please try again.'
+      }
+    });
+  }
+};
+
+/**
+ * Assign delivery staff to order (Admin only)
+ * PUT /api/orders/:id/assign-staff
+ */
+export const assignDeliveryStaff = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { deliveryStaffId } = req.body;
+
+    // Import DeliveryStaff model
+    const DeliveryStaff = (await import('../models/DeliveryStaff.js')).default;
+
+    // Check if order exists
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
+        success: false,
+        error: {
+          code: ERROR_CODES.ORDER_NOT_FOUND,
+          message: 'Order not found'
+        }
+      });
+    }
+
+    // Check if staff exists and is active
+    const staff = await DeliveryStaff.findById(deliveryStaffId);
+    if (!staff) {
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
+        success: false,
+        error: {
+          code: ERROR_CODES.NOT_FOUND,
+          message: 'Delivery staff not found'
+        }
+      });
+    }
+
+    if (!staff.isActive) {
+      return res.status(HTTP_STATUS.UNPROCESSABLE_ENTITY).json({
+        success: false,
+        error: {
+          code: ERROR_CODES.STAFF_INACTIVE,
+          message: 'Cannot assign inactive delivery staff'
+        }
+      });
+    }
+
+    // Validate order status is appropriate for delivery assignment
+    // Staff should be assigned when order is Ready or OutForDelivery
+    const validStatusesForAssignment = [ORDER_STATUS.READY, ORDER_STATUS.OUT_FOR_DELIVERY];
+    if (!validStatusesForAssignment.includes(order.status)) {
+      return res.status(HTTP_STATUS.UNPROCESSABLE_ENTITY).json({
+        success: false,
+        error: {
+          code: ERROR_CODES.VALIDATION_ERROR,
+          message: `Cannot assign delivery staff to order with status ${order.status}. Order must be Ready or Out for Delivery.`
+        }
+      });
+    }
+
+    // Assign staff to order
+    order.deliveryStaffId = deliveryStaffId;
+    await order.save();
+
+    // Populate staff details for response
+    await order.populate('deliveryStaffId', 'name phone');
+
+    return res.status(HTTP_STATUS.OK).json({
+      success: true,
+      data: order,
+      message: 'Delivery staff assigned successfully'
+    });
+  } catch (error) {
+    console.error('Error assigning delivery staff:', error);
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      error: {
+        code: ERROR_CODES.INTERNAL_ERROR,
+        message: 'Failed to assign delivery staff. Please try again.'
       }
     });
   }

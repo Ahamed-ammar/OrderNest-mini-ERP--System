@@ -5,7 +5,8 @@ import {
   getOrderById,
   getAllOrders,
   updateOrderStatus,
-  cancelOrder
+  cancelOrder,
+  assignDeliveryStaff
 } from '../controllers/orderController.js';
 import { authenticate, requireAdmin } from '../middleware/authMiddleware.js';
 import {
@@ -15,7 +16,8 @@ import {
   createOrderSchema,
   updateOrderStatusSchema,
   orderIdSchema,
-  orderFiltersSchema
+  orderFiltersSchema,
+  assignStaffSchema
 } from '../validators/orderValidator.js';
 
 const router = express.Router();
@@ -66,6 +68,15 @@ router.put(
   validateParams(orderIdSchema),
   validateBody(updateOrderStatusSchema),
   updateOrderStatus
+);
+
+router.put(
+  '/:id/assign-staff',
+  authenticate,
+  requireAdmin,
+  validateParams(orderIdSchema),
+  validateBody(assignStaffSchema),
+  assignDeliveryStaff
 );
 
 export default router;

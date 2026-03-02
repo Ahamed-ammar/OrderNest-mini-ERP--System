@@ -235,3 +235,16 @@ export const validateQuery = (schema) => {
     next();
   };
 };
+
+/**
+ * Validation schema for assigning delivery staff
+ */
+export const assignStaffSchema = Joi.object({
+  deliveryStaffId: Joi.string()
+    .pattern(/^[0-9a-fA-F]{24}$/)
+    .required()
+    .messages({
+      'string.pattern.base': 'Invalid delivery staff ID format',
+      'any.required': 'Delivery staff ID is required'
+    })
+});
