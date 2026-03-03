@@ -6,6 +6,12 @@ export const getProducts = async () => {
   return response.data;
 };
 
+// Get all products including inactive (admin only)
+export const getAllProducts = async () => {
+  const response = await axiosInstance.get('/products/admin/all');
+  return response.data;
+};
+
 // Get product by ID (public)
 export const getProductById = async (id) => {
   const response = await axiosInstance.get(`/products/${id}`);
@@ -29,3 +35,4 @@ export const toggleProductStatus = async (id) => {
   const response = await axiosInstance.patch(`/products/${id}/toggle`);
   return response.data;
 };
+

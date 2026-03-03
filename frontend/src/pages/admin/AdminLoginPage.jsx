@@ -60,7 +60,7 @@ const AdminLoginPage = () => {
       const data = await adminLogin(formData.username, formData.password);
       
       // Store JWT token and user data
-      login(data.token, data.admin);
+      login(data.data.token, data.data.admin);
       
       // Show success message
       toast.success(data.message || 'Login successful!');
@@ -68,7 +68,21 @@ const AdminLoginPage = () => {
       // Redirect to admin dashboard
       navigate('/admin/dashboard');
     } catch (error) {
-      // Error toast is handled by axios interceptor
+      // Handle different types of errors
+      if (!error.response) {
+        // Network error
+        toast.error('Cannot connect to server. Please check if the backend is running.');
+        console.error('Network error:', error);
+      } else if (error.response.status === 401) {
+        // Invalid credentials
+        toast.error('Invalid username or password');
+      } else if (error.response.data?.error?.message) {
+        // Backend error message
+        toast.error(error.response.data.error.message);
+      } else {
+        // Generic error
+        toast.error('Login failed. Please try again.');
+      }
       console.error('Login error:', error);
     } finally {
       setLoading(false);
