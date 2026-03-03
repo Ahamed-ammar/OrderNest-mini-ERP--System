@@ -401,8 +401,14 @@
     - Add "Continue" button to proceed to address page with cart validation
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 12.5, 15.2, 15.4, 16.1_
 
-- [ ] 15. Implement order flow - address form
-  - [ ] 15.1 Build address form page
+- [x] 15. Implement order flow - address form
+
+
+
+
+  - [x] 15.1 Build address form page
+
+
     - Create form with fields: name, phone, street type dropdown (Center/Top/Down side), house name, door number, landmark
     - Pre-fill name and phone from customer profile using customer API
     - Pre-fill address fields if customer has saved address
