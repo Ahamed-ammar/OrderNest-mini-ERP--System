@@ -1,11 +1,9 @@
 import express from 'express';
 import {
   createOrder,
-  getCustomerOrders,
   getOrderById,
   getAllOrders,
   updateOrderStatus,
-  cancelOrder,
   assignDeliveryStaff
 } from '../controllers/orderController.js';
 import { authenticate, requireAdmin } from '../middleware/authMiddleware.js';
@@ -21,20 +19,6 @@ import {
 } from '../validators/orderValidator.js';
 
 const router = express.Router();
-
-// Customer-specific routes (must come before parameterized routes)
-router.get(
-  '/customer/orders',
-  authenticate,
-  getCustomerOrders
-);
-
-router.put(
-  '/customer/orders/:id/cancel',
-  authenticate,
-  validateParams(orderIdSchema),
-  cancelOrder
-);
 
 // Order creation route
 router.post(

@@ -3,11 +3,19 @@ import {
   getCustomerProfile,
   updateCustomerProfile
 } from '../controllers/customerController.js';
+import {
+  getCustomerOrders,
+  cancelOrder
+} from '../controllers/orderController.js';
 import { authenticate } from '../middleware/authMiddleware.js';
 import {
   validateBody,
   updateProfileSchema
 } from '../validators/customerValidator.js';
+import {
+  validateParams,
+  orderIdSchema
+} from '../validators/orderValidator.js';
 
 const router = express.Router();
 
@@ -23,6 +31,20 @@ router.put(
   authenticate,
   validateBody(updateProfileSchema),
   updateCustomerProfile
+);
+
+// Customer order routes
+router.get(
+  '/orders',
+  authenticate,
+  getCustomerOrders
+);
+
+router.put(
+  '/orders/:id/cancel',
+  authenticate,
+  validateParams(orderIdSchema),
+  cancelOrder
 );
 
 export default router;

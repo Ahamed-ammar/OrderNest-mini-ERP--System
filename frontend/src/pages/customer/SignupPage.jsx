@@ -114,9 +114,10 @@ const SignupPage = () => {
               value={formData.username}
               onChange={handleChange}
               placeholder="Enter username"
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+              className={`w-full px-4 py-3 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
                 errors.username ? 'border-red-500' : 'border-gray-300'
               }`}
+              style={{ fontSize: '16px' }}
               disabled={loading}
             />
             {errors.username && (
@@ -136,9 +137,10 @@ const SignupPage = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter email address"
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+              className={`w-full px-4 py-3 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
                 errors.email ? 'border-red-500' : 'border-gray-300'
               }`}
+              style={{ fontSize: '16px' }}
               disabled={loading}
             />
             {errors.email && (
@@ -158,7 +160,8 @@ const SignupPage = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder="Enter your full name"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+              style={{ fontSize: '16px' }}
               disabled={loading}
             />
           </div>
@@ -175,9 +178,10 @@ const SignupPage = () => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter password (min 6 characters)"
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+              className={`w-full px-4 py-3 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
                 errors.password ? 'border-red-500' : 'border-gray-300'
               }`}
+              style={{ fontSize: '16px' }}
               disabled={loading}
             />
             {errors.password && (
@@ -197,9 +201,10 @@ const SignupPage = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="Re-enter password"
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+              className={`w-full px-4 py-3 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
                 errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
               }`}
+              style={{ fontSize: '16px' }}
               disabled={loading}
             />
             {errors.confirmPassword && (
@@ -210,7 +215,7 @@ const SignupPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-amber-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="w-full bg-amber-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors min-h-[44px]"
           >
             {loading ? 'Creating Account...' : 'Sign Up'}
           </button>

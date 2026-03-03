@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getCustomerProfile } from '../../api/customerApi';
@@ -124,12 +124,20 @@ const AddressPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 pb-24">
+    <div className="min-h-screen bg-gray-50 p-4 pb-24 md:pb-8">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Delivery Address</h1>
           <p className="text-gray-600 mt-2">Enter your delivery address details</p>
+          {/* Progress Indicator */}
+          <div className="flex items-center gap-2 mt-4">
+            <div className="flex-1 h-2 bg-green-600 rounded"></div>
+            <div className="flex-1 h-2 bg-green-600 rounded"></div>
+            <div className="flex-1 h-2 bg-green-600 rounded"></div>
+            <div className="flex-1 h-2 bg-gray-300 rounded"></div>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">Step 3 of 4: Address Details</p>
         </div>
 
         {/* Form */}
@@ -148,6 +156,7 @@ const AddressPage = () => {
               className={`w-full px-4 py-3 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 errors.name ? 'border-red-500' : 'border-gray-300'
               }`}
+              style={{ fontSize: '16px' }}
               placeholder="Enter your full name"
             />
             {errors.name && (
@@ -162,6 +171,7 @@ const AddressPage = () => {
             </label>
             <input
               type="tel"
+              inputMode="numeric"
               id="phone"
               name="phone"
               value={formData.phone}
@@ -169,6 +179,7 @@ const AddressPage = () => {
               className={`w-full px-4 py-3 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 errors.phone ? 'border-red-500' : 'border-gray-300'
               }`}
+              style={{ fontSize: '16px' }}
               placeholder="10 digit phone number"
               maxLength="10"
             />
@@ -190,6 +201,7 @@ const AddressPage = () => {
               className={`w-full px-4 py-3 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 errors.streetType ? 'border-red-500' : 'border-gray-300'
               }`}
+              style={{ fontSize: '16px' }}
             >
               <option value="">Select street type</option>
               <option value="Center">Center</option>
@@ -215,6 +227,7 @@ const AddressPage = () => {
               className={`w-full px-4 py-3 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 errors.houseName ? 'border-red-500' : 'border-gray-300'
               }`}
+              style={{ fontSize: '16px' }}
               placeholder="Enter house name"
             />
             {errors.houseName && (
@@ -236,6 +249,7 @@ const AddressPage = () => {
               className={`w-full px-4 py-3 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 errors.doorNo ? 'border-red-500' : 'border-gray-300'
               }`}
+              style={{ fontSize: '16px' }}
               placeholder="Enter door number"
             />
             {errors.doorNo && (
@@ -255,6 +269,7 @@ const AddressPage = () => {
               value={formData.landmark}
               onChange={handleChange}
               className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              style={{ fontSize: '16px' }}
               placeholder="Enter nearby landmark"
             />
           </div>

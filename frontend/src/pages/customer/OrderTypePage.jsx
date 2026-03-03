@@ -34,12 +34,20 @@ const OrderTypePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-20 md:pb-0">
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Select Order Type</h1>
           <p className="text-gray-600 mt-2">Choose how you'd like to place your order</p>
+          {/* Progress Indicator */}
+          <div className="flex items-center gap-2 mt-4">
+            <div className="flex-1 h-2 bg-green-600 rounded"></div>
+            <div className="flex-1 h-2 bg-gray-300 rounded"></div>
+            <div className="flex-1 h-2 bg-gray-300 rounded"></div>
+            <div className="flex-1 h-2 bg-gray-300 rounded"></div>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">Step 1 of 4: Order Type</p>
         </div>
       </div>
 
@@ -49,7 +57,7 @@ const OrderTypePage = () => {
           {/* Service Only Option */}
           <button
             onClick={() => handleTypeSelection('serviceOnly')}
-            className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-8 text-left border-2 border-transparent hover:border-green-500 focus:outline-none focus:border-green-500 min-h-[280px] flex flex-col"
+            className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-8 text-left border-2 border-transparent hover:border-green-500 focus:outline-none focus:border-green-500 min-h-[280px] flex flex-col min-w-[44px]"
           >
             <div className="flex-1">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
@@ -81,7 +89,7 @@ const OrderTypePage = () => {
           {/* Buy + Grinding Option */}
           <button
             onClick={() => handleTypeSelection('buyAndService')}
-            className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-8 text-left border-2 border-transparent hover:border-green-500 focus:outline-none focus:border-green-500 min-h-[280px] flex flex-col"
+            className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-8 text-left border-2 border-transparent hover:border-green-500 focus:outline-none focus:border-green-500 min-h-[280px] flex flex-col min-w-[44px]"
           >
             <div className="flex-1">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">

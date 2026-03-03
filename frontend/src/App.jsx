@@ -22,9 +22,15 @@ import ProductManagementPage from './pages/admin/ProductManagementPage';
 import StaffManagementPage from './pages/admin/StaffManagementPage';
 import ReportsPage from './pages/admin/ReportsPage';
 
+// Navigation Components
+import BottomNav from './components/common/BottomNav';
+import AdminNav from './components/admin/AdminNav';
+
 function App() {
   return (
-    <Routes>
+    <>
+      <AdminNav />
+      <Routes>
       {/* Public Routes */}
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
@@ -124,6 +130,8 @@ function App() {
       {/* Catch all - redirect to home */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    <BottomNav />
+    </>
   );
 }
 

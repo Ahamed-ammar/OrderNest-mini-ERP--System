@@ -293,8 +293,8 @@ const HomePage = () => {
         </div>
       </footer>
 
-      {/* Add padding at bottom for mobile sticky button */}
-      <div className="lg:hidden h-20"></div>
+      {/* Add padding at bottom for mobile sticky button and bottom nav */}
+      <div className="md:hidden h-32"></div>
     </div>
   );
 };

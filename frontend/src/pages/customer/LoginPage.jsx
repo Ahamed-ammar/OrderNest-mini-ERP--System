@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks/useAuth';
-import { customerLogin } from '../../api/authApi';
+import { customerLogin, adminLogin } from '../../api/authApi';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -49,13 +49,28 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      const data = await customerLogin(formData.usernameOrEmail, formData.password);
+      // Check if this is an admin login attempt (username is 'admin')
+      const isAdminLogin = formData.usernameOrEmail.toLowerCase() === 'admin';
       
-      // Store JWT token and user data
-      login(data.data.token, data.data.customer);
-      
-      toast.success('Login successful!');
-      navigate('/');
+      if (isAdminLogin) {
+        // Use admin login endpoint
+        const data = await adminLogin(formData.usernameOrEmail, formData.password);
+        
+        // Store JWT token and admin data
+        login(data.data.token, { ...data.data.admin, role: 'admin' });
+        
+        toast.success('Admin login successful!');
+        navigate('/admin/dashboard');
+      } else {
+        // Use customer login endpoint
+        const data = await customerLogin(formData.usernameOrEmail, formData.password);
+        
+        // Store JWT token and user data
+        login(data.data.token, data.data.customer);
+        
+        toast.success('Login successful!');
+        navigate('/');
+      }
     } catch (error) {
       console.error('Login error:', error);
     } finally {
@@ -87,6 +102,7 @@ const LoginPage = () => {
               className={`w-full px-4 py-3 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
                 errors.usernameOrEmail ? 'border-red-500' : 'border-gray-300'
               }`}
+              style={{ fontSize: '16px' }}
               disabled={loading}
               autoFocus
             />
@@ -110,6 +126,7 @@ const LoginPage = () => {
               className={`w-full px-4 py-3 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
                 errors.password ? 'border-red-500' : 'border-gray-300'
               }`}
+              style={{ fontSize: '16px' }}
               disabled={loading}
             />
             {errors.password && (
@@ -120,7 +137,7 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={loading || !formData.usernameOrEmail || !formData.password}
-            className="w-full bg-amber-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="w-full bg-amber-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors min-h-[44px]"
           >
             {loading ? (
               <span className="flex items-center justify-center">

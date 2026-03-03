@@ -137,15 +137,10 @@ export const getCustomerOrders = async (req, res) => {
       .sort({ createdAt: -1 })
       .populate('deliveryStaffId', 'name phone');
 
-    // Separate last 5 orders for prominent display
-    const recentOrders = orders.slice(0, 5);
-    const allOrders = orders;
-
     return res.status(HTTP_STATUS.OK).json({
       success: true,
       data: {
-        recentOrders,
-        allOrders
+        orders
       }
     });
   } catch (error) {

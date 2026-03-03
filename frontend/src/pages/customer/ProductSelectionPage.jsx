@@ -172,11 +172,11 @@ const ProductSelectionPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-32">
+    <div className="min-h-screen bg-gray-50 pb-32 md:pb-8">
       {/* Header */}
       <div className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-3">
             <div>
               <h1 className="text-xl md:text-2xl font-bold text-gray-900">Select Products</h1>
               <p className="text-sm text-gray-600 mt-1">
@@ -186,11 +186,19 @@ const ProductSelectionPage = () => {
             </div>
             <button
               onClick={() => navigate('/order/type')}
-              className="text-sm text-green-600 hover:text-green-700 font-medium"
+              className="text-sm text-green-600 hover:text-green-700 font-medium min-w-[44px] min-h-[44px] flex items-center justify-center"
             >
               Change Type
             </button>
           </div>
+          {/* Progress Indicator */}
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-2 bg-green-600 rounded"></div>
+            <div className="flex-1 h-2 bg-green-600 rounded"></div>
+            <div className="flex-1 h-2 bg-gray-300 rounded"></div>
+            <div className="flex-1 h-2 bg-gray-300 rounded"></div>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">Step 2 of 4: Select Products</p>
         </div>
       </div>
 
@@ -239,6 +247,7 @@ const ProductSelectionPage = () => {
                       onChange={(e) => handleQuantityChange(product._id, e.target.value)}
                       placeholder="0.0"
                       className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      style={{ fontSize: '16px' }}
                     />
                   </div>
 
@@ -252,7 +261,7 @@ const ProductSelectionPage = () => {
                         <button
                           key={level}
                           onClick={() => handleGrindTypeChange(product._id, level)}
-                          className={`py-2 px-3 text-sm font-medium rounded-lg border-2 transition-colors ${
+                          className={`py-3 px-3 text-sm font-medium rounded-lg border-2 transition-colors min-h-[44px] ${
                             selection.grindType === level
                               ? 'bg-green-600 text-white border-green-600'
                               : 'bg-white text-gray-700 border-gray-300 hover:border-green-500'
@@ -267,7 +276,7 @@ const ProductSelectionPage = () => {
                   {/* Add to Cart Button */}
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 mt-auto"
+                    className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 mt-auto min-h-[44px]"
                   >
                     Add to Cart
                   </button>
@@ -279,7 +288,7 @@ const ProductSelectionPage = () => {
       </div>
 
       {/* Sticky Cart Summary */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-20">
+      <div className="fixed bottom-0 md:bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-20 pb-16 md:pb-0">
         <div className="max-w-6xl mx-auto px-4 py-4">
           {/* Cart Items List (if any) */}
           {items.length > 0 && (
@@ -301,7 +310,7 @@ const ProductSelectionPage = () => {
                     </span>
                     <button
                       onClick={() => handleRemoveFromCart(item.productId, item.grindType)}
-                      className="text-red-600 hover:text-red-700 p-1"
+                      className="text-red-600 hover:text-red-700 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
                       aria-label="Remove item"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -327,7 +336,7 @@ const ProductSelectionPage = () => {
             <button
               onClick={handleContinue}
               disabled={items.length === 0}
-              className={`px-8 py-3 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
+              className={`px-8 py-3 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 min-h-[44px] ${
                 items.length === 0
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   : 'bg-green-600 text-white hover:bg-green-700'
