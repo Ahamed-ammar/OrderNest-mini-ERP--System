@@ -13,6 +13,7 @@ import AddressPage from './pages/customer/AddressPage';
 import ReviewPage from './pages/customer/ReviewPage';
 import SuccessPage from './pages/customer/SuccessPage';
 import OrderHistoryPage from './pages/customer/OrderHistoryPage';
+import ProfilePage from './pages/customer/ProfilePage';
 
 // Admin Pages
 import AdminLoginPage from './pages/admin/AdminLoginPage';
@@ -81,6 +82,14 @@ function App() {
         element={
           <ProtectedRoute>
             <OrderHistoryPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         }
       />
