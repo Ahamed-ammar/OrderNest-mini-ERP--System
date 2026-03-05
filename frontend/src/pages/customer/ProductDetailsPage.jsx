@@ -13,17 +13,21 @@ const ProductDetailsPage = () => {
 
   useEffect(() => {
     fetchProductDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchProductDetails = async () => {
     try {
       setLoading(true);
+      console.log('Fetching product with ID:', id);
       const data = await getProductById(id);
+      console.log('Product data received:', data);
       setProduct(data);
     } catch (error) {
       console.error('Error fetching product details:', error);
       toast.error('Failed to load product details');
-      navigate('/');
+      // Don't navigate away immediately, let user see the error
+      setTimeout(() => navigate('/'), 3000);
     } finally {
       setLoading(false);
     }

@@ -15,7 +15,7 @@ export const getAllProducts = async () => {
 // Get product by ID (public)
 export const getProductById = async (id) => {
   const response = await axiosInstance.get(`/products/${id}`);
-  return response.data;
+  return response.data.data.product || response.data;
 };
 
 // Create product (admin only)
