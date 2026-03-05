@@ -541,7 +541,9 @@
 - [-] 22. Build admin reports page
 
 
-  - [-] 22.1 Build reports page with analytics and CSV export
+  - [ ] 22.1 Build reports page with analytics and CSV export
+
+
 
     - Create date range picker for filtering analytics data
     - Fetch analytics data from GET /api/admin/analytics/revenue endpoint based on selected date range

@@ -9,6 +9,7 @@ import LoginPage from './pages/customer/LoginPage';
 import SignupPage from './pages/customer/SignupPage';
 import OrderTypePage from './pages/customer/OrderTypePage';
 import ProductSelectionPage from './pages/customer/ProductSelectionPage';
+import ProductDetailsPage from './pages/customer/ProductDetailsPage';
 import AddressPage from './pages/customer/AddressPage';
 import ReviewPage from './pages/customer/ReviewPage';
 import SuccessPage from './pages/customer/SuccessPage';
@@ -37,6 +38,7 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/admin/login" element={<AdminLoginPage />} />
+      <Route path="/product/:id" element={<ProductDetailsPage />} />
       <Route
         path="/order/type"
         element={

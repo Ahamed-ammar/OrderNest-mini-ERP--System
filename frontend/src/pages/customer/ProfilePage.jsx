@@ -5,6 +5,7 @@ import { getCustomerProfile, updateCustomerProfile } from '../../api/customerApi
 import { useAuth } from '../../hooks/useAuth';
 import Button from '../../components/common/Button';
 import Loader from '../../components/common/Loader';
+import CustomerHeader from '../../components/common/CustomerHeader';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -134,7 +135,9 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 pb-24 md:pb-8">
+    <>
+      <CustomerHeader />
+      <div className="min-h-screen bg-gray-50 p-4 pb-24 md:pb-8">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-6">
@@ -333,6 +336,7 @@ const ProfilePage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

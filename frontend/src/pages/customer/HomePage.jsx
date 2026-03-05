@@ -1,10 +1,33 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import CustomerHeader from '../../components/common/CustomerHeader';
+import { getProducts } from '../../api/productApi';
+import Loader from '../../components/common/Loader';
+import { toast } from 'react-toastify';
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { user, logout, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const data = await getProducts();
+      setProducts(data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      toast.error('Failed to load products');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleOrderNow = () => {
     if (isAuthenticated()) {
@@ -18,55 +41,28 @@ const HomePage = () => {
     navigate('/orders');
   };
 
+  // Product image mapping
+  const productImages = {
+    'Wheat': '/images/wheat.jpg',
+    'Rice': '/images/rice.jpg',
+    'Turmeric': '/images/turmeric-powder.jpg',
+    'Chilli': '/images/chilli.jpg',
+    'Coriander': '/images/Coriander.jpg',
+    'Garam Masala': '/images/garam masala.jpg'
+  };
+
+  const getProductImage = (productName) => {
+    // Try to match product name with image keys
+    const matchedKey = Object.keys(productImages).find(key => 
+      productName.toLowerCase().includes(key.toLowerCase())
+    );
+    return matchedKey ? productImages[matchedKey] : '/images/wheat.jpg';
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-amber-600 to-amber-700 text-white shadow-lg relative z-20">
-        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold">Flour & Spice Mill</h1>
-              <p className="text-amber-100 text-sm mt-1">Traditional Grinding, Modern Service</p>
-            </div>
-            <div className="flex items-center gap-3">
-              {isAuthenticated() ? (
-                <>
-                  <span className="text-amber-100 text-sm hidden sm:inline">
-                    Hello, {user?.name || user?.username}!
-                  </span>
-                  <button
-                    onClick={handleViewOrders}
-                    className="text-white hover:text-amber-100 text-sm sm:text-base"
-                  >
-                    My Orders
-                  </button>
-                  <button
-                    onClick={logout}
-                    className="text-white hover:text-amber-100 text-sm sm:text-base"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => navigate('/login')}
-                    className="px-4 py-2 text-amber-600 bg-white rounded-lg hover:bg-amber-50 transition-colors text-sm sm:text-base font-medium"
-                  >
-                    Login
-                  </button>
-                  <button
-                    onClick={() => navigate('/signup')}
-                    className="px-4 py-2 text-white bg-amber-800 rounded-lg hover:bg-amber-900 transition-colors text-sm sm:text-base font-medium"
-                  >
-                    Sign Up
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Customer Header */}
+      <CustomerHeader />
 
       {/* Hero Section with Background */}
       <section className="relative overflow-hidden">
@@ -181,7 +177,7 @@ const HomePage = () => {
       </section>
 
       {/* Products Overview Section */}
-      <section className="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
+      <section id="products" className="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
         <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-amber-100">
           <div className="text-center mb-8">
             <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">Our Services</h3>
@@ -252,74 +248,101 @@ const HomePage = () => {
 
           {/* Popular Products */}
           <div className="pt-8 border-t-2 border-amber-100">
-            <h4 className="text-2xl font-bold text-gray-900 mb-6 text-center">Popular Products We Grind</h4>
+            <h4 className="text-2xl font-bold text-gray-900 mb-6 text-center">Our Products</h4>
             
-            {/* Featured Products with Images */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {[
-                { name: 'Wheat Flour', image: '/images/wheat.jpg', desc: 'Fresh ground wheat flour' },
-                { name: 'Turmeric Powder', image: '/images/turmeric-powder.jpg', desc: 'Pure turmeric powder' },
-                { name: 'Chilli Powder', image: '/images/chilli.jpg', desc: 'Spicy red chilli powder' },
-                { name: 'Garam Masala', image: '/images/garam masala.jpg', desc: 'Aromatic spice blend' }
-              ].map((product) => (
-                <div
-                  key={product.name}
-                  className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border-2 border-amber-100 hover:border-amber-300"
-                >
-                  {/* Image Container */}
-                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                    {/* Fallback gradient if image fails */}
-                    <div className="hidden absolute inset-0 bg-gradient-to-br from-amber-200 to-orange-300 items-center justify-center">
-                      <span className="text-6xl">🌾</span>
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Loader />
+              </div>
+            ) : products.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <p className="text-lg">No products available at the moment</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {products.map((product) => (
+                  <div
+                    key={product._id}
+                    className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-amber-100 hover:border-amber-300 flex flex-col"
+                  >
+                    {/* Image Container */}
+                    <div className="relative h-56 overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50">
+                      <img
+                        src={getProductImage(product.name)}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                      {/* Fallback gradient if image fails */}
+                      <div className="hidden absolute inset-0 bg-gradient-to-br from-amber-200 to-orange-300 items-center justify-center">
+                        <span className="text-6xl">🌾</span>
+                      </div>
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                      
+                      {/* Product Name Overlay */}
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <h5 className="text-2xl font-bold text-white drop-shadow-lg">{product.name}</h5>
+                      </div>
                     </div>
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    {/* Content */}
+                    <div className="p-6 flex-grow flex flex-col">
+                      {/* Pricing Information */}
+                      <div className="space-y-3 mb-6 flex-grow">
+                        <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-sm font-medium text-gray-600">Raw Material</span>
+                            <span className="text-lg font-bold text-amber-700">
+                              ₹{product.rawMaterialPricePerKg}/kg
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm font-medium text-gray-600">Grinding Service</span>
+                            <span className="text-lg font-bold text-green-700">
+                              ₹{product.grindingChargePerKg}/kg
+                            </span>
+                          </div>
+                        </div>
+                        
+                        {/* Service Options */}
+                        <div className="text-sm text-gray-600 space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-green-600">✓</span>
+                            <span>Service Only: ₹{product.grindingChargePerKg}/kg</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-green-600">✓</span>
+                            <span>Buy + Grinding: ₹{(product.rawMaterialPricePerKg + product.grindingChargePerKg).toFixed(2)}/kg</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Buttons */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          onClick={() => navigate(`/product/${product._id}`)}
+                          className="bg-white hover:bg-gray-50 text-amber-700 font-semibold py-3 px-4 rounded-lg text-sm shadow-md border-2 border-amber-200 hover:border-amber-300 transition flex items-center justify-center gap-2"
+                        >
+                          {/* <span>ℹ️</span> */}
+                          <span>Details</span>
+                        </button>
+                        <button
+                          onClick={handleOrderNow}
+                          className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-4 rounded-lg text-sm shadow-md transform transition hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                        >
+                          <span>🛒</span>
+                          <span>Order</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  
-                  {/* Content */}
-                  <div className="p-5">
-                    <h5 className="text-lg font-bold text-gray-900 mb-2">{product.name}</h5>
-                    <p className="text-sm text-gray-600">{product.desc}</p>
-                  </div>
-                  
-                  {/* Decorative corner */}
-                  <div className="absolute top-3 right-3 w-10 h-10 bg-amber-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <span className="text-white text-xl">✓</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Other Products Grid */}
-            {/* <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {[
-                { name: 'Rice', icon: '🍚', color: 'from-gray-100 to-slate-100' },
-                { name: 'Coriander', icon: '🌿', color: 'from-green-100 to-emerald-100' },
-                { name: 'Cumin', icon: '🟤', color: 'from-amber-200 to-yellow-200' },
-                { name: 'Black Pepper', icon: '⚫', color: 'from-gray-200 to-slate-200' },
-                { name: 'Gram', icon: '🟠', color: 'from-orange-100 to-amber-100' },
-                { name: 'Cardamom', icon: '🟢', color: 'from-green-200 to-lime-200' },
-                { name: 'Cloves', icon: '🟤', color: 'from-amber-100 to-yellow-100' },
-                { name: 'Fenugreek', icon: '🟡', color: 'from-yellow-100 to-amber-100' }
-              ].map((product) => (
-                <div
-                  key={product.name}
-                  className={`bg-gradient-to-br ${product.color} rounded-xl p-5 text-center hover:shadow-lg transition transform hover:scale-105 cursor-pointer border border-amber-200`}
-                >
-                  <div className="text-4xl mb-3">{product.icon}</div>
-                  <p className="text-sm font-semibold text-gray-800">{product.name}</p>
-                </div>
-              ))}
-            </div> */}
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -359,7 +382,7 @@ const HomePage = () => {
       </section>
 
       {/* Contact Section */}
-      <section className="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
+      <section id="contact" className="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-br from-white to-amber-50 rounded-2xl shadow-xl p-8 sm:p-10 border border-amber-200">
           <div className="text-center mb-8">
             <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">Get In Touch</h3>
