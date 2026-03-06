@@ -52,11 +52,11 @@ export const CartProvider = ({ children }) => {
     return cartItems.reduce((total, item) => total + item.itemTotal, 0);
   };
 
-  // Add item to cart with pricing calculation
-  const addToCart = (product, quantity, grindType) => {
-    // Check if product already exists in cart
+  // Add item to cart with pricing calculation and order type
+  const addToCart = (product, quantity, grindType, itemOrderType) => {
+    // Check if product already exists in cart with same grind type and order type
     const existingItemIndex = items.findIndex(
-      (item) => item.productId === product._id && item.grindType === grindType
+      (item) => item.productId === product._id && item.grindType === grindType && item.orderType === itemOrderType
     );
 
     let updatedItems;
@@ -65,7 +65,7 @@ export const CartProvider = ({ children }) => {
       // Update existing item quantity
       updatedItems = [...items];
       const newQuantity = updatedItems[existingItemIndex].quantity + quantity;
-      const itemTotal = calculateItemTotal(product, newQuantity);
+      const itemTotal = calculateItemTotal(product, newQuantity, itemOrderType);
       
       updatedItems[existingItemIndex] = {
         ...updatedItems[existingItemIndex],
@@ -74,12 +74,13 @@ export const CartProvider = ({ children }) => {
       };
     } else {
       // Add new item
-      const itemTotal = calculateItemTotal(product, quantity);
+      const itemTotal = calculateItemTotal(product, quantity, itemOrderType);
       const newItem = {
         productId: product._id,
         productName: product.name,
         quantity,
         grindType,
+        orderType: itemOrderType, // Store order type per item
         rawMaterialPrice: product.rawMaterialPricePerKg,
         grindingCharge: product.grindingChargePerKg,
         itemTotal,
@@ -92,9 +93,9 @@ export const CartProvider = ({ children }) => {
   };
 
   // Remove item from cart
-  const removeFromCart = (productId, grindType) => {
+  const removeFromCart = (productId, grindType, itemOrderType) => {
     const updatedItems = items.filter(
-      (item) => !(item.productId === productId && item.grindType === grindType)
+      (item) => !(item.productId === productId && item.grindType === grindType && item.orderType === itemOrderType)
     );
     setItems(updatedItems);
     setTotalAmount(calculateTotalAmount(updatedItems));

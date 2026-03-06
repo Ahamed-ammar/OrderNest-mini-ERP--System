@@ -31,7 +31,7 @@ const HomePage = () => {
 
   const handleOrderNow = () => {
     if (isAuthenticated()) {
-      navigate('/order/type');
+      navigate('/order/products');
     } else {
       navigate('/login');
     }

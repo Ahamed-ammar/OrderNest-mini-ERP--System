@@ -34,7 +34,7 @@ const ProductDetailsPage = () => {
   };
 
   const handleOrderNow = () => {
-    navigate('/order/type');
+    navigate('/order/products');
   };
 
   // Product image mapping
@@ -89,6 +89,32 @@ const ProductDetailsPage = () => {
     <>
       <CustomerHeader />
       <div className="min-h-screen bg-gray-50 pb-20">
+        {/* Background Pattern - Same as HomePage */}
+        <div className="fixed inset-0 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 -z-10">
+          {/* Organic flour/spice texture pattern using CSS */}
+          <div className="absolute inset-0 opacity-20" style={{
+            backgroundImage: `
+              radial-gradient(circle at 20% 50%, rgba(251, 191, 36, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(249, 115, 22, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 40% 20%, rgba(234, 179, 8, 0.2) 0%, transparent 50%),
+              radial-gradient(circle at 60% 70%, rgba(217, 119, 6, 0.2) 0%, transparent 50%)
+            `,
+            backgroundSize: '400px 400px, 300px 300px, 500px 500px, 350px 350px',
+            backgroundPosition: '0 0, 100px 100px, 200px 50px, 300px 200px'
+          }}></div>
+          
+          {/* Subtle grain texture */}
+          <div className="absolute inset-0 opacity-10" style={{
+            backgroundImage: `repeating-linear-gradient(
+              45deg,
+              transparent,
+              transparent 2px,
+              rgba(251, 191, 36, 0.1) 2px,
+              rgba(251, 191, 36, 0.1) 4px
+            )`
+          }}></div>
+        </div>
+
         {/* Back Button */}
         <div className="bg-white border-b border-gray-200">
           <div className="max-w-6xl mx-auto px-4 py-4">
