@@ -5,7 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 const CustomerHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, isAdmin } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const scrollToSection = (sectionId) => {
@@ -58,6 +58,22 @@ const CustomerHeader = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
+            {isAdmin() && (
+              <button
+                onClick={() => handleNavigation('/admin/dashboard')}
+                className={`transition font-medium flex items-center gap-1 ${
+                  isActive('/admin/dashboard') 
+                    ? 'text-amber-100 border-b-2 border-amber-100' 
+                    : 'text-white hover:text-amber-100'
+                }`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Dashboard
+              </button>
+            )}
+            
             <button
               onClick={() => handleNavigation('/order/products')}
               className={`transition font-medium ${
@@ -153,6 +169,22 @@ const CustomerHeader = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-amber-500">
             <nav className="flex flex-col space-y-3">
+              {isAdmin() && (
+                <button
+                  onClick={() => handleNavigation('/admin/dashboard')}
+                  className={`text-left px-4 py-2 rounded-lg transition font-medium flex items-center gap-2 ${
+                    isActive('/admin/dashboard') 
+                      ? 'bg-amber-800 text-amber-100' 
+                      : 'text-white hover:bg-amber-800'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  Dashboard
+                </button>
+              )}
+              
               <button
                 onClick={() => handleNavigation('/order/products')}
                 className={`text-left px-4 py-2 rounded-lg transition font-medium ${

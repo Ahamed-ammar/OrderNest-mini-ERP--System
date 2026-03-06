@@ -13,6 +13,7 @@ const ProductSelectionPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [productSelections, setProductSelections] = useState({});
+  const [showCartModal, setShowCartModal] = useState(false);
 
   // Fetch products on mount
   useEffect(() => {
@@ -201,7 +202,7 @@ const ProductSelectionPage = () => {
   return (
     <>
       <CustomerHeader />
-      <div className="min-h-screen bg-gray-50 pb-32 md:pb-8">
+      <div className="min-h-screen bg-gray-50 pb-8">
         {/* Background Pattern - Same as HomePage */}
         <div className="fixed inset-0 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 -z-10">
           {/* Organic flour/spice texture pattern using CSS */}
@@ -453,63 +454,98 @@ const ProductSelectionPage = () => {
         </div>
       </div>
 
-      {/* Sticky Cart Summary - Outside main container */}
+      {/* Floating Cart Button - Bottom Right */}
       {items.length > 0 && (
-        <div className="fixed bottom-0 md:bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-20 pb-16 md:pb-0">
-          <div className="max-w-6xl mx-auto px-4 py-4">
-            {/* Cart Items List */}
-            <div className="mb-3 max-h-32 overflow-y-auto">
-              {items.map((item, index) => (
-                <div
-                  key={`${item.productId}-${item.grindType}-${item.orderType}-${index}`}
-                  className="flex items-center justify-between py-2 text-sm border-b border-gray-100 last:border-0"
-                >
-                  <div className="flex-1">
-                    <span className="font-medium text-gray-900">{item.productName}</span>
-                    <span className="text-gray-500 ml-2">
-                      ({item.quantity}kg, {item.grindType}, {item.orderType === 'serviceOnly' ? 'Service Only' : 'Buy + Grind'})
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="font-medium text-gray-900">
-                      ₹{item.itemTotal.toFixed(2)}
-                    </span>
-                    <button
-                      onClick={() => handleRemoveFromCart(item.productId, item.grindType, item.orderType)}
-                      className="text-red-600 hover:text-red-700 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
-                      aria-label="Remove item"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+        <button
+          onClick={() => setShowCartModal(true)}
+          className="fixed bottom-6 right-6 bg-green-600 hover:bg-green-700 text-white rounded-full p-4 shadow-2xl z-50 transition-transform hover:scale-110 active:scale-95"
+        >
+          <div className="relative">
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            {/* Item Count Badge */}
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+              {getItemCount()}
+            </span>
+          </div>
+        </button>
+      )}
 
-            {/* Cart Summary and Continue Button */}
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex-1">
-                <p className="text-sm text-gray-600">
-                  {getItemCount()} item{getItemCount() !== 1 ? 's' : ''} in cart
-                </p>
-                <p className="text-xl font-bold text-gray-900">
-                  Total: ₹{totalAmount.toFixed(2)}
-                </p>
-              </div>
+      {/* Cart Modal */}
+      {showCartModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end md:items-center justify-center">
+          <div className="bg-white w-full md:max-w-2xl md:rounded-2xl rounded-t-2xl max-h-[80vh] flex flex-col">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Your Cart</h2>
               <button
-                onClick={handleContinue}
-                disabled={items.length === 0}
-                className={`px-8 py-3 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 min-h-[44px] ${
-                  items.length === 0
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-green-600 text-white hover:bg-green-700'
-                }`}
+                onClick={() => setShowCartModal(false)}
+                className="text-gray-500 hover:text-gray-700 p-2"
               >
-                Continue
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
+
+            {/* Cart Items */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {items.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  <svg className="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  <p className="text-lg">Your cart is empty</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {items.map((item, index) => (
+                    <div
+                      key={`${item.productId}-${item.grindType}-${item.orderType}-${index}`}
+                      className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg"
+                    >
+                      <div className="flex-1">
+                        <h3 className="font-bold text-gray-900">{item.productName}</h3>
+                        <div className="text-sm text-gray-600 mt-1 space-y-1">
+                          <p>Quantity: {item.quantity}kg</p>
+                          <p>Grind Level: {item.grindType}</p>
+                          <p>Order Type: {item.orderType === 'serviceOnly' ? 'Service Only' : 'Buy + Grinding'}</p>
+                        </div>
+                        <p className="text-lg font-bold text-green-600 mt-2">₹{item.itemTotal.toFixed(2)}</p>
+                      </div>
+                      <button
+                        onClick={() => handleRemoveFromCart(item.productId, item.grindType, item.orderType)}
+                        className="text-red-600 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition"
+                        aria-label="Remove item"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            {items.length > 0 && (
+              <div className="border-t border-gray-200 p-6 bg-gray-50">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm text-gray-600">{getItemCount()} item{getItemCount() !== 1 ? 's' : ''} in cart</p>
+                    <p className="text-2xl font-bold text-gray-900">Total: ₹{totalAmount.toFixed(2)}</p>
+                  </div>
+                  <button
+                    onClick={handleContinue}
+                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold shadow-lg transition transform hover:scale-105"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
