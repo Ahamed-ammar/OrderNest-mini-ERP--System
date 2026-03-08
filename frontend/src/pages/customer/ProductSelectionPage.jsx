@@ -230,7 +230,7 @@ const ProductSelectionPage = () => {
         </div>
 
         {/* Header */}
-        <div className="bg-white shadow-sm sticky top-16 z-10">
+        <div className="bg-white shadow-sm sticky top-16 z-20">
           <div className="max-w-6xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between mb-3">
               <div>
@@ -252,7 +252,7 @@ const ProductSelectionPage = () => {
 
         {/* Browse Products Header - Show if no items in cart */}
         {items.length === 0 && (
-          <div className="relative overflow-hidden py-16">
+          <div className="relative overflow-hidden py-16 z-0">
             {/* Background Pattern - Same as HomePage */}
             <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
               {/* Organic flour/spice texture pattern using CSS */}

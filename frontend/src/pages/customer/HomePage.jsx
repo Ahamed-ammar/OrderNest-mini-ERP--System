@@ -479,8 +479,8 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Sticky Bottom CTA for Mobile */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg z-10">
+      {/* Sticky Bottom CTA for Mobile - positioned above bottom nav */}
+      <div className="lg:hidden fixed left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg z-10" style={{ bottom: '64px' }}>
         <button
           onClick={handleOrderNow}
           className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-4 px-6 rounded-lg text-lg shadow-lg transform active:scale-95 transition"
@@ -502,7 +502,7 @@ const HomePage = () => {
       </footer>
 
       {/* Add padding at bottom for mobile sticky button and bottom nav */}
-      <div className="md:hidden h-32"></div>
+      <div className="md:hidden h-40"></div>
     </div>
   );
 };
