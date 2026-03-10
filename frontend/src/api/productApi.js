@@ -3,7 +3,7 @@ import axiosInstance from './axiosConfig';
 // Get all active products (public)
 export const getProducts = async () => {
   const response = await axiosInstance.get('/products');
-  return response.data;
+  return response.data.data.products || response.data;
 };
 
 // Get all products including inactive (admin only)
@@ -15,7 +15,7 @@ export const getAllProducts = async () => {
 // Get product by ID (public)
 export const getProductById = async (id) => {
   const response = await axiosInstance.get(`/products/${id}`);
-  return response.data;
+  return response.data.data.product || response.data;
 };
 
 // Create product (admin only)

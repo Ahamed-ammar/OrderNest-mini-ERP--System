@@ -29,6 +29,11 @@ const orderItemSchema = new mongoose.Schema(
       required: true,
       enum: Object.values(GRIND_TYPES)
     },
+    orderType: {
+      type: String,
+      required: true,
+      enum: Object.values(ORDER_TYPES)
+    },
     rawMaterialPriceSnapshot: {
       type: Number,
       required: true,
@@ -92,8 +97,8 @@ const orderSchema = new mongoose.Schema(
     },
     orderType: {
       type: String,
-      required: true,
-      enum: Object.values(ORDER_TYPES)
+      enum: Object.values(ORDER_TYPES),
+      required: false // Made optional since we now use per-item order types
     },
     items: {
       type: [orderItemSchema],

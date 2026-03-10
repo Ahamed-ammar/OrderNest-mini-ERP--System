@@ -9,10 +9,12 @@ import LoginPage from './pages/customer/LoginPage';
 import SignupPage from './pages/customer/SignupPage';
 import OrderTypePage from './pages/customer/OrderTypePage';
 import ProductSelectionPage from './pages/customer/ProductSelectionPage';
+import ProductDetailsPage from './pages/customer/ProductDetailsPage';
 import AddressPage from './pages/customer/AddressPage';
 import ReviewPage from './pages/customer/ReviewPage';
 import SuccessPage from './pages/customer/SuccessPage';
 import OrderHistoryPage from './pages/customer/OrderHistoryPage';
+import ProfilePage from './pages/customer/ProfilePage';
 
 // Admin Pages
 import AdminLoginPage from './pages/admin/AdminLoginPage';
@@ -36,6 +38,7 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/admin/login" element={<AdminLoginPage />} />
+      <Route path="/product/:id" element={<ProductDetailsPage />} />
       <Route
         path="/order/type"
         element={
@@ -81,6 +84,14 @@ function App() {
         element={
           <ProtectedRoute>
             <OrderHistoryPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         }
       />

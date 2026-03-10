@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getCustomerOrders, cancelOrder } from '../../api/customerApi';
 import { useCart } from '../../hooks/useCart';
 import { toast } from 'react-toastify';
+import CustomerHeader from '../../components/common/CustomerHeader';
 
 const OrderHistoryPage = () => {
   const navigate = useNavigate();
@@ -151,7 +152,9 @@ const OrderHistoryPage = () => {
   const olderOrders = orders.slice(5);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 md:pb-6">
+    <>
+      <CustomerHeader />
+      <div className="min-h-screen bg-gray-50 pb-20 md:pb-6">
       {/* Header */}
       <div className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4">
@@ -239,6 +242,7 @@ const OrderHistoryPage = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

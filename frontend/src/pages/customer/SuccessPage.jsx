@@ -1,17 +1,22 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useCart } from '../../context/CartContext';
 
 const SuccessPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const order = location.state?.order;
+  const { clearCart } = useCart();
 
-  // Redirect if no order data
+  // Redirect if no order data (but give a moment for the page to render)
   useEffect(() => {
     if (!order) {
-      toast.error('No order information found');
-      navigate('/');
+      const timer = setTimeout(() => {
+        toast.error('No order information found');
+        navigate('/');
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [order, navigate]);
 
@@ -113,7 +118,10 @@ const SuccessPage = () => {
           </button>
           
           <button
-            onClick={() => navigate('/order/type')}
+            onClick={() => {
+              clearCart();
+              navigate('/order/products');
+            }}
             className="w-full bg-white text-blue-600 py-4 px-6 rounded-lg font-semibold text-base border-2 border-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
           >
             Place Another Order
