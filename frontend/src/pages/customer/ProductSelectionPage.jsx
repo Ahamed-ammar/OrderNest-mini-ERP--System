@@ -454,11 +454,11 @@ const ProductSelectionPage = () => {
         </div>
       </div>
 
-      {/* Floating Cart Button - Bottom Right */}
+      {/* Floating Cart Button - Bottom Right - Hidden on mobile */}
       {items.length > 0 && (
         <button
           onClick={() => setShowCartModal(true)}
-          className="fixed bottom-6 right-6 bg-green-600 hover:bg-green-700 text-white rounded-full p-4 shadow-2xl z-50 transition-transform hover:scale-110 active:scale-95"
+          className="hidden md:flex fixed bottom-6 right-6 bg-green-600 hover:bg-green-700 text-white rounded-full p-4 shadow-2xl z-50 transition-transform hover:scale-110 active:scale-95"
         >
           <div className="relative">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -46,10 +46,19 @@ const CustomerHeader = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div 
-            className="flex items-center cursor-pointer"
+            className="flex items-center cursor-pointer gap-3"
             onClick={() => handleNavigation('/')}
           >
-            <span className="text-2xl mr-2">🌾</span>
+            <img 
+              src="/images/logo.jpg" 
+              alt="Flour & Spice Mill Logo" 
+              className="h-12 w-12 object-contain rounded-lg"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'inline';
+              }}
+            />
+            <span className="text-2xl hidden">🌾</span>
             <div>
               <h1 className="text-xl font-bold">Flour & Spice Mill</h1>
               <p className="text-amber-100 text-xs hidden sm:block">Traditional Grinding</p>

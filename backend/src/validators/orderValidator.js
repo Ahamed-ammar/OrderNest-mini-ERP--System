@@ -5,14 +5,6 @@ import { ORDER_TYPES, GRIND_TYPES, STREET_TYPES, ORDER_STATUS } from '../config/
  * Validation schema for order creation
  */
 export const createOrderSchema = Joi.object({
-  orderType: Joi.string()
-    .valid(...Object.values(ORDER_TYPES))
-    .required()
-    .messages({
-      'any.only': 'Order type must be either "serviceOnly" or "buyAndService"',
-      'any.required': 'Order type is required'
-    }),
-  
   items: Joi.array()
     .items(
       Joi.object({
@@ -38,6 +30,13 @@ export const createOrderSchema = Joi.object({
           .messages({
             'any.only': 'Grind type must be Fine, Medium, or Coarse',
             'any.required': 'Grind type is required'
+          }),
+        orderType: Joi.string()
+          .valid(...Object.values(ORDER_TYPES))
+          .required()
+          .messages({
+            'any.only': 'Order type must be either "serviceOnly" or "buyAndService"',
+            'any.required': 'Order type is required for each item'
           })
       })
     )

@@ -66,7 +66,8 @@ const ReviewPage = () => {
 
     items.forEach(item => {
       grindingTotal += item.quantity * item.grindingCharge;
-      if (orderType === 'buyAndService') {
+      // Check per-item order type
+      if (item.orderType === 'buyAndService') {
         rawMaterialTotal += item.quantity * item.rawMaterialPrice;
       }
     });
@@ -88,14 +89,11 @@ const ReviewPage = () => {
     try {
       // Prepare order data
       const orderData = {
-        orderType,
         items: items.map(item => ({
           productId: item.productId,
-          productName: item.productName,
           quantity: item.quantity,
           grindType: item.grindType,
-          rawMaterialPriceSnapshot: item.rawMaterialPrice,
-          grindingChargeSnapshot: item.grindingCharge
+          orderType: item.orderType // Include per-item order type
         })),
         deliveryAddress: {
           name: deliveryAddress.name,
@@ -166,6 +164,9 @@ const ReviewPage = () => {
                   <p className="text-sm text-gray-600 mt-1">
                     Quantity: {item.quantity} kg | Grind: {item.grindType}
                   </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {item.orderType === 'serviceOnly' ? 'Service Only' : 'Buy + Grinding'}
+                  </p>
                 </div>
                 <div className="text-right ml-4">
                   <p className="font-semibold text-gray-900">₹{item.itemTotal.toFixed(2)}</p>
@@ -179,7 +180,7 @@ const ReviewPage = () => {
         <div className="bg-white rounded-lg shadow-md p-6 mb-4">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Price Breakdown</h2>
           <div className="space-y-3">
-            {orderType === 'buyAndService' && (
+            {rawMaterialTotal > 0 && (
               <div className="flex justify-between text-gray-700">
                 <span>Raw Material Cost</span>
                 <span>₹{rawMaterialTotal.toFixed(2)}</span>

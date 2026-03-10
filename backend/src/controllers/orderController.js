@@ -20,7 +20,7 @@ import {
  */
 export const createOrder = async (req, res) => {
   try {
-    const { orderType, items, deliveryAddress } = req.body;
+    const { items, deliveryAddress } = req.body;
     const customerId = req.user.userId;
 
     // Validate cart has items (already validated by Joi, but double-check)
@@ -63,19 +63,20 @@ export const createOrder = async (req, res) => {
       // Create price snapshot
       const priceSnapshot = createPriceSnapshot(product);
       
-      // Create order item with snapshot
+      // Create order item with snapshot and per-item order type
       const orderItem = {
         productId: product._id,
         productName: product.name,
         quantity: item.quantity,
         grindType: item.grindType,
+        orderType: item.orderType, // Store per-item order type
         rawMaterialPriceSnapshot: priceSnapshot.rawMaterialPriceSnapshot,
         grindingChargeSnapshot: priceSnapshot.grindingChargeSnapshot,
         itemTotal: 0 // Will be calculated next
       };
       
-      // Calculate item total
-      orderItem.itemTotal = calculateItemTotal(orderItem, orderType);
+      // Calculate item total using per-item order type
+      orderItem.itemTotal = calculateItemTotal(orderItem, item.orderType);
       
       orderItems.push(orderItem);
     }
@@ -86,10 +87,9 @@ export const createOrder = async (req, res) => {
     // Calculate estimated ready date
     const estimatedReadyDate = calculateEstimatedReadyDate();
 
-    // Create order
+    // Create order without global orderType
     const order = new Order({
       customerId,
-      orderType,
       items: orderItems,
       deliveryAddress,
       totalAmount,
@@ -104,7 +104,6 @@ export const createOrder = async (req, res) => {
       success: true,
       data: {
         orderId: order._id,
-        orderType: order.orderType,
         items: order.items,
         totalAmount: order.totalAmount,
         status: order.status,
