@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -13,12 +13,50 @@ const AdminNav = () => {
     return null;
   }
 
+  // Professional SVG icons for navigation
+  const getIcon = (iconName) => {
+    const icons = {
+      dashboard: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5v4M16 5v4" />
+        </svg>
+      ),
+      orders: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+        </svg>
+      ),
+      products: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+      ),
+      staff: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+        </svg>
+      ),
+      reports: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+      ),
+      logout: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+      )
+    };
+    return icons[iconName];
+  };
+
   const navItems = [
-    { name: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
-    { name: 'Orders', path: '/admin/orders', icon: '📦' },
-    { name: 'Products', path: '/admin/products', icon: '🌾' },
-    { name: 'Staff', path: '/admin/staff', icon: '👥' },
-    { name: 'Reports', path: '/admin/reports', icon: '📈' }
+    { name: 'Dashboard', path: '/admin/dashboard', icon: 'dashboard' },
+    { name: 'Orders', path: '/admin/orders', icon: 'orders' },
+    { name: 'Products', path: '/admin/products', icon: 'products' },
+    { name: 'Staff', path: '/admin/staff', icon: 'staff' },
+    { name: 'Reports', path: '/admin/reports', icon: 'reports' }
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -41,13 +79,13 @@ const AdminNav = () => {
                   <button
                     key={item.path}
                     onClick={() => navigate(item.path)}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center ${
                       isActive(item.path)
                         ? 'bg-amber-100 text-amber-700'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
-                    <span className="mr-2">{item.icon}</span>
+                    <span className="mr-2">{getIcon(item.icon)}</span>
                     {item.name}
                   </button>
                 ))}
@@ -55,8 +93,9 @@ const AdminNav = () => {
             </div>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors flex items-center"
             >
+              <span className="mr-2">{getIcon('logout')}</span>
               Logout
             </button>
           </div>
@@ -97,13 +136,13 @@ const AdminNav = () => {
                     navigate(item.path);
                     setIsMenuOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-3 rounded-md text-base font-medium transition-colors min-h-[44px] ${
+                  className={`w-full text-left px-3 py-3 rounded-md text-base font-medium transition-colors min-h-[44px] flex items-center ${
                     isActive(item.path)
                       ? 'bg-amber-100 text-amber-700'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
-                  <span className="mr-3">{item.icon}</span>
+                  <span className="mr-3">{getIcon(item.icon)}</span>
                   {item.name}
                 </button>
               ))}
@@ -112,9 +151,9 @@ const AdminNav = () => {
                   handleLogout();
                   setIsMenuOpen(false);
                 }}
-                className="w-full text-left px-3 py-3 rounded-md text-base font-medium text-red-600 hover:bg-red-50 transition-colors min-h-[44px]"
+                className="w-full text-left px-3 py-3 rounded-md text-base font-medium text-red-600 hover:bg-red-50 transition-colors min-h-[44px] flex items-center"
               >
-                <span className="mr-3">🚪</span>
+                <span className="mr-3">{getIcon('logout')}</span>
                 Logout
               </button>
             </div>

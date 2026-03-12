@@ -119,7 +119,12 @@ const OrderManagementPage = () => {
       setStatusModalOpen(false);
       fetchOrders();
     } catch (error) {
-      toast.error(error.response?.data?.error?.message || 'Failed to update order status');
+      const errorMessage = error.response?.data?.error?.message || 
+                          error.response?.data?.message || 
+                          error.message || 
+                          'Failed to update order status';
+      
+      toast.error(errorMessage);
     } finally {
       setUpdating(false);
     }
