@@ -188,15 +188,25 @@ const ProductSelectionPage = () => {
     );
   }
 
-  // Product images mapping
-  const productImages = {
-    'Wheat': '/images/wheat.jpg',
-    'Rice': '/images/rice.jpg',
-    'Turmeric': '/images/turmeric-powder.jpg',
-    'Chili': '/images/chilli.jpg',
-    'Chilli': '/images/chilli.jpg',
-    'Coriander': '/images/Coriander.jpg',
-    'Garam Masala': '/images/garam masala.jpg',
+  // Get product image with fallback
+  const getProductImage = (product) => {
+    // Use the product's imageUrl if available
+    if (product.imageUrl) {
+      return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${product.imageUrl}`;
+    }
+    
+    // Fallback to static images based on product name
+    const productImages = {
+      'Wheat': '/images/wheat.jpg',
+      'Rice': '/images/rice.jpg',
+      'Turmeric': '/images/turmeric-powder.jpg',
+      'Chili': '/images/chilli.jpg',
+      'Chilli': '/images/chilli.jpg',
+      'Coriander': '/images/Coriander.jpg',
+      'Garam Masala': '/images/garam masala.jpg',
+    };
+    
+    return productImages[product.name] || '/placeholder-product.svg';
   };
 
   return (
@@ -307,19 +317,17 @@ const ProductSelectionPage = () => {
                 >
                   {/* Product Image */}
                   <div className="relative h-48 bg-gradient-to-br from-amber-50 to-orange-50 overflow-hidden">
-                    {productImages[product.name] ? (
-                      <img
-                        src={productImages[product.name]}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'flex';
-                        }}
-                      />
-                    ) : null}
+                    <img
+                      src={getProductImage(product)}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
                     {/* Fallback gradient */}
-                    <div className={`${productImages[product.name] ? 'hidden' : 'flex'} absolute inset-0 bg-gradient-to-br from-amber-200 to-orange-300 items-center justify-center`}>
+                    <div className="hidden absolute inset-0 bg-gradient-to-br from-amber-200 to-orange-300 items-center justify-center">
                       <span className="text-6xl">🌾</span>
                     </div>
                   </div>

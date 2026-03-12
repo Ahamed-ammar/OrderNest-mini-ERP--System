@@ -37,22 +37,30 @@ const ProductDetailsPage = () => {
     navigate('/order/products');
   };
 
-  // Product image mapping
-  const productImages = {
-    'Wheat': '/images/wheat.jpg',
-    'Rice': '/images/rice.jpg',
-    'Turmeric': '/images/turmeric-powder.jpg',
-    'Chili': '/images/chilli.jpg',
-    'Chilli': '/images/chilli.jpg',
-    'Coriander': '/images/Coriander.jpg',
-    'Garam Masala': '/images/garam masala.jpg',
-  };
-
-  const getProductImage = (productName) => {
+  // Get product image with fallback
+  const getProductImage = (product) => {
+    // Use the product's imageUrl if available
+    if (product && product.imageUrl) {
+      return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${product.imageUrl}`;
+    }
+    
+    // Fallback to static images based on product name
+    const productImages = {
+      'Wheat': '/images/wheat.jpg',
+      'Rice': '/images/rice.jpg',
+      'Turmeric': '/images/turmeric-powder.jpg',
+      'Chili': '/images/chilli.jpg',
+      'Chilli': '/images/chilli.jpg',
+      'Coriander': '/images/Coriander.jpg',
+      'Garam Masala': '/images/garam masala.jpg',
+    };
+    
+    if (!product || !product.name) return '/placeholder-product.svg';
+    
     const matchedKey = Object.keys(productImages).find(key => 
-      productName.toLowerCase().includes(key.toLowerCase())
+      product.name.toLowerCase().includes(key.toLowerCase())
     );
-    return matchedKey ? productImages[matchedKey] : '/images/wheat.jpg';
+    return matchedKey ? productImages[matchedKey] : '/placeholder-product.svg';
   };
 
   if (loading) {
@@ -137,11 +145,11 @@ const ProductDetailsPage = () => {
               {/* Product Image */}
               <div className="relative h-96 lg:h-full bg-gradient-to-br from-amber-50 to-orange-50">
                 <img
-                  src={getProductImage(product.name)}
+                  src={getProductImage(product)}
                   alt={product.name}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    e.target.style.display = 'none';
+                    e.target.style.display = 'none'; 
                     e.target.nextSibling.style.display = 'flex';
                   }}
                 />

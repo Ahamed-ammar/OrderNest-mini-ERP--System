@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import compression from 'compression';
 import helmet from 'helmet';
+import path from 'path';
 import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
@@ -46,6 +47,9 @@ app.use(compression());
 // Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Static file serving for uploaded images
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // General rate limiting for all API routes
 app.use('/api', generalLimiter);

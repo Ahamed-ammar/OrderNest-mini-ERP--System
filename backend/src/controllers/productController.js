@@ -1,5 +1,7 @@
 import * as productService from '../services/productService.js';
 import { HTTP_STATUS, ERROR_CODES } from '../config/constants.js';
+import path from 'path';
+import fs from 'fs';
 
 /**
  * Get all active products (public endpoint for customers)
@@ -106,6 +108,12 @@ export const getProductById = async (req, res) => {
 export const createProduct = async (req, res) => {
   try {
     const productData = req.body;
+    
+    // Add image URL if file was uploaded
+    if (req.file) {
+      productData.imageUrl = `/uploads/products/${req.file.filename}`;
+    }
+    
     const product = await productService.createProduct(productData);
     
     res.status(HTTP_STATUS.CREATED).json({
@@ -116,6 +124,15 @@ export const createProduct = async (req, res) => {
       message: 'Product created successfully'
     });
   } catch (error) {
+    // Clean up uploaded file if product creation fails
+    if (req.file) {
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (unlinkError) {
+        console.error('Error deleting uploaded file:', unlinkError);
+      }
+    }
+    
     if (error.code === ERROR_CODES.VALIDATION_ERROR) {
       return res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,
@@ -145,6 +162,26 @@ export const updateProduct = async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
     
+    // Get existing product to handle image replacement
+    const existingProduct = await productService.getProductById(id);
+    
+    // Add new image URL if file was uploaded
+    if (req.file) {
+      updateData.imageUrl = `/uploads/products/${req.file.filename}`;
+      
+      // Delete old image file if it exists
+      if (existingProduct.imageUrl) {
+        const oldImagePath = path.join('uploads/products', path.basename(existingProduct.imageUrl));
+        try {
+          if (fs.existsSync(oldImagePath)) {
+            fs.unlinkSync(oldImagePath);
+          }
+        } catch (unlinkError) {
+          console.error('Error deleting old image file:', unlinkError);
+        }
+      }
+    }
+    
     const product = await productService.updateProduct(id, updateData);
     
     res.status(HTTP_STATUS.OK).json({
@@ -155,6 +192,15 @@ export const updateProduct = async (req, res) => {
       message: 'Product updated successfully'
     });
   } catch (error) {
+    // Clean up uploaded file if product update fails
+    if (req.file) {
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (unlinkError) {
+        console.error('Error deleting uploaded file:', unlinkError);
+      }
+    }
+    
     if (error.code === ERROR_CODES.PRODUCT_NOT_FOUND) {
       return res.status(HTTP_STATUS.NOT_FOUND).json({
         success: false,

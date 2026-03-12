@@ -1,6 +1,7 @@
 import express from 'express';
 import * as productController from '../controllers/productController.js';
 import { authenticate, requireAdmin } from '../middleware/authMiddleware.js';
+import { uploadProductImage, handleUploadError } from '../middleware/uploadMiddleware.js';
 import {
   validateProductId,
   validateCreateProduct,
@@ -31,6 +32,8 @@ router.post(
   '/',
   authenticate,
   requireAdmin,
+  uploadProductImage,
+  handleUploadError,
   validateCreateProduct,
   productController.createProduct
 );
@@ -40,6 +43,8 @@ router.put(
   '/:id',
   authenticate,
   requireAdmin,
+  uploadProductImage,
+  handleUploadError,
   validateProductId,
   validateUpdateProduct,
   productController.updateProduct

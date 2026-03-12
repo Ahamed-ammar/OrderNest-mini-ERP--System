@@ -41,22 +41,26 @@ const HomePage = () => {
     navigate('/orders');
   };
 
-  // Product image mapping
-  const productImages = {
-    'Wheat': '/images/wheat.jpg',
-    'Rice': '/images/rice.jpg',
-    'Turmeric': '/images/turmeric-powder.jpg',
-    'Chilli': '/images/chilli.jpg',
-    'Coriander': '/images/Coriander.jpg',
-    'Garam Masala': '/images/garam masala.jpg'
-  };
-
-  const getProductImage = (productName) => {
-    // Try to match product name with image keys
+  const getProductImage = (product) => {
+    // Use the product's imageUrl if available, otherwise fall back to static images
+    if (product.imageUrl) {
+      return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${product.imageUrl}`;
+    }
+    
+    // Fallback to static images based on product name
+    const productImages = {
+      'Wheat': '/images/wheat.jpg',
+      'Rice': '/images/rice.jpg',
+      'Turmeric': '/images/turmeric-powder.jpg',
+      'Chilli': '/images/chilli.jpg',
+      'Coriander': '/images/Coriander.jpg',
+      'Garam Masala': '/images/garam masala.jpg'
+    };
+    
     const matchedKey = Object.keys(productImages).find(key => 
-      productName.toLowerCase().includes(key.toLowerCase())
+      product.name.toLowerCase().includes(key.toLowerCase())
     );
-    return matchedKey ? productImages[matchedKey] : '/images/wheat.jpg';
+    return matchedKey ? productImages[matchedKey] : '/placeholder-product.svg';
   };
 
   return (
@@ -268,7 +272,7 @@ const HomePage = () => {
                     {/* Image Container */}
                     <div className="relative h-56 overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50">
                       <img
-                        src={getProductImage(product.name)}
+                        src={getProductImage(product)}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         onError={(e) => {
