@@ -6,7 +6,6 @@ import Loader from '../../components/common/Loader';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import StatusBadge from '../../components/admin/StatusBadge';
-import AdminNav from '../../components/admin/AdminNav';
 import {
   ORDER_STATUS,
   VALID_STATUS_TRANSITIONS,
@@ -171,7 +170,6 @@ const OrderManagementPage = () => {
   if (loading && orders.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <AdminNav />
         <div className="flex justify-center items-center h-96">
           <Loader />
         </div>
@@ -181,10 +179,12 @@ const OrderManagementPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <AdminNav />
-      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Order Management</h1>
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Order Management</h1>
+          <p className="mt-1 text-sm text-gray-600">Manage and track all customer orders</p>
+        </div>
 
         {/* Filters */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">

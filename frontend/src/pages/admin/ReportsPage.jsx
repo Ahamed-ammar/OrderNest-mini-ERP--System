@@ -73,10 +73,13 @@ const ReportsPage = () => {
   const COLORS = ['#3B82F6', '#10B981'];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 pb-20 md:pb-4">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Reports & Analytics</h1>
-        <p className="text-gray-600 mb-6">View business analytics and export reports</p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Reports & Analytics</h1>
+          <p className="mt-1 text-sm text-gray-600">View business analytics and export reports</p>
+        </div>
 
         {/* Date Range Picker */}
         <div className="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">
