@@ -1,0 +1,7 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#F3F4F6"/>
+  <rect x="50" y="50" width="300" height="200" fill="#E5E7EB" rx="20"/>
+  <text x="200" y="120" text-anchor="middle" fill="#374151" font-family="Arial, sans-serif" font-size="24" font-weight="bold">🍚</text>
+  <text x="200" y="160" text-anchor="middle" fill="#374151" font-family="Arial, sans-serif" font-size="32" font-weight="bold">RICE</text>
+  <text x="200" y="190" text-anchor="middle" fill="#6B7280" font-family="Arial, sans-serif" font-size="14">Premium Quality Grain</text>
+</svg>

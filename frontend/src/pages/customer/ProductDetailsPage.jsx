@@ -39,12 +39,14 @@ const ProductDetailsPage = () => {
 
   // Get product image with fallback
   const getProductImage = (product) => {
-    // Use the product's imageUrl if available
-    if (product && product.imageUrl) {
-      return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${product.imageUrl}`;
+    // Special case: "ragi" should use database image if available
+    if (product && product.name && product.name.toLowerCase().includes('ragi')) {
+      if (product.imageUrl) {
+        return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${product.imageUrl}`;
+      }
     }
     
-    // Fallback to static images based on product name
+    // For all other products, prioritize static images
     const productImages = {
       'Wheat': '/images/wheat.jpg',
       'Rice': '/images/rice.jpg',
@@ -55,12 +57,17 @@ const ProductDetailsPage = () => {
       'Garam Masala': '/images/garam masala.jpg',
     };
     
-    if (!product || !product.name) return '/placeholder-product.svg';
+    if (product && product.name) {
+      const matchedKey = Object.keys(productImages).find(key => 
+        product.name.toLowerCase().includes(key.toLowerCase())
+      );
+      if (matchedKey) {
+        return productImages[matchedKey];
+      }
+    }
     
-    const matchedKey = Object.keys(productImages).find(key => 
-      product.name.toLowerCase().includes(key.toLowerCase())
-    );
-    return matchedKey ? productImages[matchedKey] : '/placeholder-product.svg';
+    // Final fallback to placeholder
+    return '/placeholder-product.svg';
   };
 
   if (loading) {

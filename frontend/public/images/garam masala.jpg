@@ -1,0 +1,8 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#92400E"/>
+  <rect x="50" y="50" width="300" height="200" fill="#78350F" rx="20"/>
+  <text x="200" y="120" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="24" font-weight="bold">🧂</text>
+  <text x="200" y="150" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="24" font-weight="bold">GARAM</text>
+  <text x="200" y="180" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="24" font-weight="bold">MASALA</text>
+  <text x="200" y="210" text-anchor="middle" fill="#FEF3C7" font-family="Arial, sans-serif" font-size="14">Spice Blend</text>
+</svg>
