@@ -39,34 +39,23 @@ const ProductDetailsPage = () => {
 
   // Get product image with fallback
   const getProductImage = (product) => {
-    // Special case: "ragi" should use database image if available
-    if (product && product.name && product.name.toLowerCase().includes('ragi')) {
-      if (product.imageUrl) {
-        return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${product.imageUrl}`;
-      }
-    }
-    
-    // For all other products, prioritize static images
     const productImages = {
-      'Wheat': '/images/wheat.jpg',
-      'Rice': '/images/rice.jpg',
-      'Turmeric': '/images/turmeric-powder.jpg',
-      'Chili': '/images/chilli.jpg',
-      'Chilli': '/images/chilli.jpg',
-      'Coriander': '/images/Coriander.jpg',
-      'Garam Masala': '/images/garam masala.jpg',
+      'wheat': '/images/wheat.jpg',
+      'rice': '/images/rice.jpg',
+      'turmeric': '/images/turmeric-powder.jpg',
+      'chili': '/images/chilli.jpg',
+      'chilli': '/images/chilli.jpg',
+      'coriander': '/images/Coriander.jpg',
+      'garam masala': '/images/garam masala.jpg',
+      'ragi': '/images/ragi.jpg',
     };
-    
+
     if (product && product.name) {
-      const matchedKey = Object.keys(productImages).find(key => 
-        product.name.toLowerCase().includes(key.toLowerCase())
-      );
-      if (matchedKey) {
-        return productImages[matchedKey];
-      }
+      const nameLower = product.name.toLowerCase();
+      const matchedKey = Object.keys(productImages).find(key => nameLower.includes(key));
+      if (matchedKey) return productImages[matchedKey];
     }
-    
-    // Final fallback to placeholder
+
     return '/placeholder-product.svg';
   };
 
