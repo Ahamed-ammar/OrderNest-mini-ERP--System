@@ -230,7 +230,7 @@ const ReviewPage = () => {
         </div>
 
         {/* Confirm Button */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 md:relative md:border-0 md:bg-transparent md:p-0">
+        <div className="fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 p-4 md:relative md:bottom-auto md:border-0 md:bg-transparent md:p-0">
           <button
             onClick={handleConfirmOrder}
             disabled={loading}

@@ -482,16 +482,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Sticky Bottom CTA for Mobile - positioned above bottom nav */}
-      <div className="lg:hidden fixed left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg z-10" style={{ bottom: '64px' }}>
-        <button
-          onClick={handleOrderNow}
-          className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-4 px-6 rounded-lg text-lg shadow-lg transform active:scale-95 transition"
-        >
-          🛒 Order Now
-        </button>
-      </div>
-
       {/* Footer */}
       <footer className="bg-gray-800 text-white mt-12 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
