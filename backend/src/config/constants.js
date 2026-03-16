@@ -64,15 +64,15 @@ export const JWT_EXPIRATION = {
 export const RATE_LIMITS = {
   LOGIN: {
     WINDOW_MS: 15 * 60 * 1000, // 15 minutes
-    MAX_REQUESTS: 5
+    MAX_REQUESTS: 50
   },
   GENERAL: {
     WINDOW_MS: 15 * 60 * 1000, // 15 minutes
-    MAX_REQUESTS: 100
+    MAX_REQUESTS: 200
   },
   ADMIN: {
     WINDOW_MS: 15 * 60 * 1000, // 15 minutes
-    MAX_REQUESTS: 50
+    MAX_REQUESTS: 100
   }
 };
 

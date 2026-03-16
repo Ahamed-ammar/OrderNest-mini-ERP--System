@@ -17,10 +17,9 @@ export const loginLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  // Skip successful requests from counting
   skipSuccessfulRequests: false,
-  // Skip failed requests from counting (set to false to count all attempts)
-  skipFailedRequests: false
+  skipFailedRequests: false,
+  keyGenerator: (req) => req.headers['x-forwarded-for']?.split(',')[0] || req.ip
 });
 
 /**
