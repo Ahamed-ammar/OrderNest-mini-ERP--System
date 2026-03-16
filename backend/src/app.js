@@ -59,6 +59,11 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 // General rate limiting for all API routes
 app.use('/api', generalLimiter);
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({ status: 'OK', message: 'Flour & Spice Mill API is running', version: '1.0.0' });
+});
+
 // Health check route (no rate limiting)
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
