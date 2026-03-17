@@ -84,6 +84,17 @@ const CustomerHeader = () => {
             )}
             
             <button
+              onClick={() => handleNavigation('/')}
+              className={`transition font-medium ${
+                isActive('/') 
+                  ? 'text-amber-100 border-b-2 border-amber-100' 
+                  : 'text-white hover:text-amber-100'
+              }`}
+            >
+              Home
+            </button>
+            
+            <button
               onClick={() => handleNavigation('/order/products')}
               className={`transition font-medium ${
                 isActive('/order/products') 
@@ -193,6 +204,17 @@ const CustomerHeader = () => {
                   Dashboard
                 </button>
               )}
+              
+              <button
+                onClick={() => handleNavigation('/')}
+                className={`text-left px-4 py-2 rounded-lg transition font-medium ${
+                  isActive('/') 
+                    ? 'bg-amber-800 text-amber-100' 
+                    : 'text-white hover:bg-amber-800'
+                }`}
+              >
+                Home
+              </button>
               
               <button
                 onClick={() => handleNavigation('/order/products')}
