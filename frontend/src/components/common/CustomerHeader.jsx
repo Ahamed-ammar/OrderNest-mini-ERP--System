@@ -8,24 +8,6 @@ const CustomerHeader = () => {
   const { user, logout, isAuthenticated, isAdmin } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const scrollToSection = (sectionId) => {
-    if (location.pathname !== '/') {
-      navigate('/');
-      setTimeout(() => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
-    } else {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-    setIsMobileMenuOpen(false);
-  };
-
   const handleNavigation = (path) => {
     navigate(path);
     setIsMobileMenuOpen(false);
@@ -36,261 +18,128 @@ const CustomerHeader = () => {
     setIsMobileMenuOpen(false);
   };
 
-  const isActive = (path) => {
-    return location.pathname === path;
-  };
+  const isActive = (path) => location.pathname === path;
+
+  const navLinkClass = (path) =>
+    isActive(path)
+      ? 'text-primary border-b-2 border-primary pb-1 font-semibold'
+      : 'text-on-background/60 hover:text-primary transition-colors font-semibold';
 
   return (
-    <header className="bg-gradient-to-r from-amber-600 to-amber-700 text-white shadow-lg sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div 
-            className="flex items-center cursor-pointer gap-3"
-            onClick={() => handleNavigation('/')}
-          >
-            <img 
-              src="/images/logo.jpg" 
-              alt="Flour & Spice Mill Logo" 
-              className="h-12 w-12 object-contain rounded-lg"
-              onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'inline';
-              }}
-            />
-            <span className="text-2xl hidden">🌾</span>
-            <div>
-              <h1 className="text-xl font-bold">Flour & Spice Mill</h1>
-              <p className="text-amber-100 text-xs hidden sm:block">Traditional Grinding</p>
+    <header className="w-full sticky top-0 z-50 bg-background/80 backdrop-blur-xl shadow-nav">
+      <div className="flex justify-between items-center max-w-7xl mx-auto px-6 md:px-8 h-20">
+        {/* Logo */}
+        <div
+          className="flex items-center gap-3 cursor-pointer"
+          onClick={() => handleNavigation('/')}
+        >
+          <img
+            src="/images/logo.jpg"
+            alt="Flour & Spice Mill"
+            className="h-10 w-10 object-contain rounded-xl"
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
+          <span className="text-xl font-headline font-black tracking-tight text-on-background">
+            Flour &amp; Spice Mill
+          </span>
+        </div>
+
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-8 font-headline">
+          <button onClick={() => handleNavigation('/')} className={navLinkClass('/')}>Home</button>
+          <button onClick={() => handleNavigation('/order/products')} className={navLinkClass('/order/products')}>Products</button>
+          {isAuthenticated() && (
+            <button onClick={() => handleNavigation('/orders')} className={navLinkClass('/orders')}>My Orders</button>
+          )}
+          {isAdmin() && (
+            <button onClick={() => handleNavigation('/admin/dashboard')} className={navLinkClass('/admin/dashboard')}>Dashboard</button>
+          )}
+        </nav>
+
+        {/* Desktop Actions */}
+        <div className="hidden md:flex items-center gap-2">
+          {isAuthenticated() ? (
+            <>
+              <button
+                onClick={() => handleNavigation('/profile')}
+                className="p-2 hover:bg-surface-container-low rounded-full transition-all active:scale-95"
+                title="Profile"
+              >
+                <span className="material-symbols-outlined text-primary">account_circle</span>
+              </button>
+              <button
+                onClick={handleLogout}
+                className="p-2 hover:bg-surface-container-low rounded-full transition-all active:scale-95"
+                title="Logout"
+              >
+                <span className="material-symbols-outlined text-primary">logout</span>
+              </button>
+            </>
+          ) : (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => handleNavigation('/login')}
+                className="px-5 py-2 text-primary font-headline font-semibold hover:bg-primary-container/30 rounded-full transition-all"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => handleNavigation('/signup')}
+                className="px-5 py-2 sage-gradient text-on-primary font-headline font-semibold rounded-full shadow-sage hover:shadow-sage-lg transition-all active:scale-95"
+              >
+                Sign Up
+              </button>
             </div>
-          </div>
+          )}
+        </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            {isAdmin() && (
+        {/* Mobile Menu Toggle */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden p-2 hover:bg-surface-container-low rounded-full transition-all"
+        >
+          <span className="material-symbols-outlined text-on-background">
+            {isMobileMenuOpen ? 'close' : 'menu'}
+          </span>
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-background/95 backdrop-blur-xl border-t border-outline-variant/20 px-6 py-4">
+          <nav className="flex flex-col gap-1">
+            {[
+              { label: 'Home', path: '/' },
+              { label: 'Products', path: '/order/products' },
+              ...(isAuthenticated() ? [{ label: 'My Orders', path: '/orders' }, { label: 'Profile', path: '/profile' }] : []),
+              ...(isAdmin() ? [{ label: 'Dashboard', path: '/admin/dashboard' }] : []),
+            ].map(({ label, path }) => (
               <button
-                onClick={() => handleNavigation('/admin/dashboard')}
-                className={`transition font-medium flex items-center gap-1 ${
-                  isActive('/admin/dashboard') 
-                    ? 'text-amber-100 border-b-2 border-amber-100' 
-                    : 'text-white hover:text-amber-100'
+                key={path}
+                onClick={() => handleNavigation(path)}
+                className={`text-left px-4 py-3 rounded-xl font-headline font-semibold transition-all ${
+                  isActive(path) ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant hover:bg-surface-container-low'
                 }`}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                Dashboard
+                {label}
               </button>
-            )}
-            
-            <button
-              onClick={() => handleNavigation('/')}
-              className={`transition font-medium ${
-                isActive('/') 
-                  ? 'text-amber-100 border-b-2 border-amber-100' 
-                  : 'text-white hover:text-amber-100'
-              }`}
-            >
-              Home
-            </button>
-            
-            <button
-              onClick={() => handleNavigation('/order/products')}
-              className={`transition font-medium ${
-                isActive('/order/products') 
-                  ? 'text-amber-100 border-b-2 border-amber-100' 
-                  : 'text-white hover:text-amber-100'
-              }`}
-            >
-              Products
-            </button>
-            
-            {isAuthenticated() && (
-              <button
-                onClick={() => handleNavigation('/orders')}
-                className={`transition font-medium ${
-                  isActive('/orders') 
-                    ? 'text-amber-100 border-b-2 border-amber-100' 
-                    : 'text-white hover:text-amber-100'
-                }`}
-              >
-                My Orders
-              </button>
-            )}
-            
-            <button
-              onClick={() => scrollToSection('contact')}
-              className="text-white hover:text-amber-100 transition font-medium"
-            >
-              Contact
-            </button>
-
+            ))}
             {isAuthenticated() ? (
-              <>
-                <button
-                  onClick={() => handleNavigation('/profile')}
-                  className={`transition font-medium ${
-                    isActive('/profile') 
-                      ? 'text-amber-100 border-b-2 border-amber-100' 
-                      : 'text-white hover:text-amber-100'
-                  }`}
-                >
-                  Profile
-                </button>
-                <div className="flex items-center gap-3 pl-3 border-l border-amber-500">
-                  <span className="text-amber-100 text-sm">
-                    {user?.name || user?.username}
-                  </span>
-                  <button
-                    onClick={handleLogout}
-                    className="px-4 py-2 bg-amber-800 hover:bg-amber-900 rounded-lg transition font-medium"
-                  >
-                    Logout
-                  </button>
-                </div>
-              </>
+              <button
+                onClick={handleLogout}
+                className="text-left px-4 py-3 rounded-xl font-headline font-semibold text-error hover:bg-error/5 transition-all mt-2"
+              >
+                Logout
+              </button>
             ) : (
-              <div className="flex items-center gap-3 pl-3 border-l border-amber-500">
-                <button
-                  onClick={() => handleNavigation('/login')}
-                  className="px-4 py-2 text-amber-600 bg-white rounded-lg hover:bg-amber-50 transition font-medium"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={() => handleNavigation('/signup')}
-                  className="px-4 py-2 bg-amber-800 hover:bg-amber-900 rounded-lg transition font-medium"
-                >
-                  Sign Up
-                </button>
+              <div className="flex gap-3 mt-3 pt-3 border-t border-outline-variant/20">
+                <button onClick={() => handleNavigation('/login')} className="flex-1 py-3 text-primary font-headline font-semibold border-2 border-primary/20 rounded-full hover:bg-primary/5 transition-all">Login</button>
+                <button onClick={() => handleNavigation('/signup')} className="flex-1 py-3 sage-gradient text-on-primary font-headline font-semibold rounded-full transition-all">Sign Up</button>
               </div>
             )}
           </nav>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-amber-800 transition"
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
-          </button>
         </div>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-amber-500">
-            <nav className="flex flex-col space-y-3">
-              {isAdmin() && (
-                <button
-                  onClick={() => handleNavigation('/admin/dashboard')}
-                  className={`text-left px-4 py-2 rounded-lg transition font-medium flex items-center gap-2 ${
-                    isActive('/admin/dashboard') 
-                      ? 'bg-amber-800 text-amber-100' 
-                      : 'text-white hover:bg-amber-800'
-                  }`}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                  Dashboard
-                </button>
-              )}
-              
-              <button
-                onClick={() => handleNavigation('/')}
-                className={`text-left px-4 py-2 rounded-lg transition font-medium ${
-                  isActive('/') 
-                    ? 'bg-amber-800 text-amber-100' 
-                    : 'text-white hover:bg-amber-800'
-                }`}
-              >
-                Home
-              </button>
-              
-              <button
-                onClick={() => handleNavigation('/order/products')}
-                className={`text-left px-4 py-2 rounded-lg transition font-medium ${
-                  isActive('/order/products') 
-                    ? 'bg-amber-800 text-amber-100' 
-                    : 'text-white hover:bg-amber-800'
-                }`}
-              >
-                Products
-              </button>
-              
-              {isAuthenticated() && (
-                <button
-                  onClick={() => handleNavigation('/orders')}
-                  className={`text-left px-4 py-2 rounded-lg transition font-medium ${
-                    isActive('/orders') 
-                      ? 'bg-amber-800 text-amber-100' 
-                      : 'text-white hover:bg-amber-800'
-                  }`}
-                >
-                  My Orders
-                </button>
-              )}
-              
-              <button
-                onClick={() => scrollToSection('contact')}
-                className="text-left px-4 py-2 text-white hover:bg-amber-800 rounded-lg transition font-medium"
-              >
-                Contact
-              </button>
-
-              {isAuthenticated() ? (
-                <>
-                  <button
-                    onClick={() => handleNavigation('/profile')}
-                    className={`text-left px-4 py-2 rounded-lg transition font-medium ${
-                      isActive('/profile') 
-                        ? 'bg-amber-800 text-amber-100' 
-                        : 'text-white hover:bg-amber-800'
-                    }`}
-                  >
-                    Profile
-                  </button>
-                  <div className="px-4 py-2 border-t border-amber-500 mt-2 pt-4">
-                    <p className="text-amber-100 text-sm mb-3">
-                      Logged in as: {user?.name || user?.username}
-                    </p>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full px-4 py-2 bg-amber-800 hover:bg-amber-900 rounded-lg transition font-medium"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <div className="px-4 py-2 border-t border-amber-500 mt-2 pt-4 space-y-2">
-                  <button
-                    onClick={() => handleNavigation('/login')}
-                    className="w-full px-4 py-2 text-amber-600 bg-white rounded-lg hover:bg-amber-50 transition font-medium"
-                  >
-                    Login
-                  </button>
-                  <button
-                    onClick={() => handleNavigation('/signup')}
-                    className="w-full px-4 py-2 bg-amber-800 hover:bg-amber-900 rounded-lg transition font-medium"
-                  >
-                    Sign Up
-                  </button>
-                </div>
-              )}
-            </nav>
-          </div>
-        )}
-      </div>
+      )}
     </header>
   );
 };

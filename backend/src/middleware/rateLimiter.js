@@ -17,7 +17,7 @@ export const loginLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  // Skip successful requests from counting
+  // Skip successful requests from counting9
   skipSuccessfulRequests: false,
   // Skip failed requests from counting (set to false to count all attempts)
   skipFailedRequests: false

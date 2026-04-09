@@ -4,14 +4,38 @@
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900 font-sans;
+    font-family: 'Inter', sans-serif;
+    background-color: #fcf9f8;
+    color: #323232;
   }
-  
-  * {
-    @apply box-border;
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
 }
 
 @layer components {
-  /* Custom component styles can be added here */
+  .sage-gradient {
+    background: linear-gradient(135deg, #47664a 0%, #3b5a3f 100%);
+  }
+
+  .btn-primary {
+    @apply sage-gradient text-on-primary font-headline font-bold rounded-full px-8 py-4 shadow-sage hover:shadow-sage-lg hover:opacity-95 active:scale-[0.97] transition-all;
+  }
+
+  .btn-secondary {
+    @apply bg-surface-container-low text-on-surface font-headline font-bold rounded-full px-8 py-4 hover:bg-surface-container-high active:scale-[0.97] transition-all;
+  }
+
+  .card {
+    @apply bg-surface-container-lowest rounded-xl shadow-card border border-outline-variant/10;
+  }
+
+  .input-field {
+    @apply w-full bg-surface-container-high border-none rounded-full px-6 py-4 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all font-body text-on-surface;
+  }
 }

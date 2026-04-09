@@ -3,126 +3,58 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { CartContext } from '../../context/CartContext';
 import { createOrder } from '../../api/orderApi';
+import CustomerHeader from '../../components/common/CustomerHeader';
 
 const ReviewPage = () => {
   const navigate = useNavigate();
-  const { orderType, items, totalAmount, isEmpty, clearCart } = useContext(CartContext);
-
+  const { items, totalAmount, isEmpty, clearCart } = useContext(CartContext);
   const [deliveryAddress, setDeliveryAddress] = useState(null);
   const [loading, setLoading] = useState(false);
   const [estimatedReadyDate, setEstimatedReadyDate] = useState(null);
 
-  // Load delivery address from localStorage
   useEffect(() => {
-    const storedAddress = localStorage.getItem('deliveryAddress');
-    if (storedAddress) {
-      try {
-        const address = JSON.parse(storedAddress);
-        setDeliveryAddress(address);
-      } catch (error) {
-        console.error('Error loading address:', error);
-        toast.error('Failed to load delivery address');
-        navigate('/order/address');
-      }
+    const stored = localStorage.getItem('deliveryAddress');
+    if (stored) {
+      try { setDeliveryAddress(JSON.parse(stored)); }
+      catch { toast.error('Failed to load address'); navigate('/order/address'); }
     } else {
       toast.error('No delivery address found');
       navigate('/order/address');
     }
   }, [navigate]);
 
-  // Check if cart is empty
   useEffect(() => {
-    if (isEmpty()) {
-      toast.error('Your cart is empty. Please add items first.');
-      navigate('/order/products');
-    }
+    if (isEmpty()) { toast.error('Your cart is empty'); navigate('/order/products'); }
   }, [isEmpty, navigate]);
 
-  // Calculate estimated ready date (2 business days)
   useEffect(() => {
-    const calculateReadyDate = () => {
-      const today = new Date();
-      let daysAdded = 0;
-      const readyDate = new Date(today);
-
-      while (daysAdded < 2) {
-        readyDate.setDate(readyDate.getDate() + 1);
-        // Skip Sundays (0)
-        if (readyDate.getDay() !== 0) {
-          daysAdded++;
-        }
-      }
-
-      return readyDate;
-    };
-
-    setEstimatedReadyDate(calculateReadyDate());
+    const d = new Date();
+    let added = 0;
+    while (added < 2) { d.setDate(d.getDate() + 1); if (d.getDay() !== 0) added++; }
+    setEstimatedReadyDate(d);
   }, []);
 
-  // Calculate price breakdown
-  const calculateBreakdown = () => {
-    let grindingTotal = 0;
-    let rawMaterialTotal = 0;
-
-    items.forEach(item => {
-      grindingTotal += item.quantity * item.grindingCharge;
-      // Check per-item order type
-      if (item.orderType === 'buyAndService') {
-        rawMaterialTotal += item.quantity * item.rawMaterialPrice;
-      }
-    });
-
-    return { grindingTotal, rawMaterialTotal };
-  };
-
-  const { grindingTotal, rawMaterialTotal } = calculateBreakdown();
+  const grindingTotal = items.reduce((s, i) => s + i.quantity * i.grindingCharge, 0);
+  const rawMaterialTotal = items.reduce((s, i) => i.orderType === 'buyAndService' ? s + i.quantity * i.rawMaterialPrice : s, 0);
 
   const handleConfirmOrder = async () => {
-    if (!deliveryAddress) {
-      toast.error('Delivery address is missing');
-      navigate('/order/address');
-      return;
-    }
-
+    if (!deliveryAddress) { toast.error('Delivery address is missing'); return; }
     setLoading(true);
-
     try {
-      // Prepare order data
-      const orderData = {
-        items: items.map(item => ({
-          productId: item.productId,
-          quantity: item.quantity,
-          grindType: item.grindType,
-          orderType: item.orderType // Include per-item order type
-        })),
+      const response = await createOrder({
+        items: items.map(i => ({ productId: i.productId, quantity: i.quantity, grindType: i.grindType, orderType: i.orderType })),
         deliveryAddress: {
-          name: deliveryAddress.name,
-          phone: deliveryAddress.phone,
-          streetType: deliveryAddress.streetType,
-          houseName: deliveryAddress.houseName,
-          doorNo: deliveryAddress.doorNo,
-          landmark: deliveryAddress.landmark || ''
+          name: deliveryAddress.name, phone: deliveryAddress.phone,
+          streetType: deliveryAddress.streetType, houseName: deliveryAddress.houseName,
+          doorNo: deliveryAddress.doorNo, landmark: deliveryAddress.landmark || ''
         }
-      };
-
-      // Create order
-      const response = await createOrder(orderData);
-
-      // Clear cart and address
+      });
       clearCart();
       localStorage.removeItem('deliveryAddress');
-
-      // Navigate to success page with order details
-      navigate('/order/success', { 
-        state: { 
-          order: response.data 
-        } 
-      });
-
       toast.success('Order placed successfully!');
-    } catch (error) {
-      console.error('Error creating order:', error);
-      toast.error(error.response?.data?.error?.message || 'Failed to place order. Please try again.');
+      navigate('/order/success', { state: { order: response.data } });
+    } catch (err) {
+      toast.error(err.response?.data?.error?.message || 'Failed to place order. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -130,127 +62,130 @@ const ReviewPage = () => {
 
   if (!deliveryAddress) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 pb-24 md:pb-8">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Review Order</h1>
-          <p className="text-gray-600 mt-2">Review your order details before confirmation</p>
-          {/* Progress Indicator */}
-          <div className="flex items-center gap-2 mt-4">
-            <div className="flex-1 h-2 bg-green-600 rounded"></div>
-            <div className="flex-1 h-2 bg-green-600 rounded"></div>
-            <div className="flex-1 h-2 bg-green-600 rounded"></div>
-            <div className="flex-1 h-2 bg-green-600 rounded"></div>
-          </div>
-          <p className="text-xs text-gray-500 mt-2">Step 4 of 4: Review & Confirm</p>
-        </div>
+    <>
+      <CustomerHeader />
+      <div className="min-h-screen bg-background pb-32">
+        <main className="max-w-2xl mx-auto px-6 md:px-8 py-12">
 
-        {/* Order Items */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-4">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Items</h2>
-          <div className="space-y-4">
-            {items.map((item, index) => (
-              <div key={index} className="flex justify-between items-start border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
-                <div className="flex-1">
-                  <h3 className="font-medium text-gray-900">{item.productName}</h3>
-                  <p className="text-sm text-gray-600 mt-1">
-                    Quantity: {item.quantity} kg | Grind: {item.grindType}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {item.orderType === 'serviceOnly' ? 'Service Only' : 'Buy + Grinding'}
-                  </p>
+          {/* Progress */}
+          <div className="flex items-center justify-center mb-12">
+            <div className="flex items-center w-full max-w-lg">
+              {[['1', 'Products', true], ['2', 'Address', true], ['3', 'Review', true]].map(([num, label, done], i, arr) => (
+                <div key={num} className={`flex items-center ${i < arr.length - 1 ? 'flex-1' : ''}`}>
+                  <div className="flex flex-col items-center">
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center font-headline font-bold ${done ? 'sage-gradient text-on-primary shadow-sage' : 'bg-surface-container-highest text-on-surface opacity-40'}`}>{num}</div>
+                    <span className={`mt-2 text-xs font-headline font-bold whitespace-nowrap ${done ? 'text-primary' : 'text-on-surface-variant opacity-40'}`}>{label}</span>
+                  </div>
+                  {i < arr.length - 1 && <div className={`h-1 flex-1 mx-3 rounded-full ${done ? 'bg-primary' : 'bg-surface-container-highest'}`} />}
                 </div>
-                <div className="text-right ml-4">
-                  <p className="font-semibold text-gray-900">₹{item.itemTotal.toFixed(2)}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Price Breakdown */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-4">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Price Breakdown</h2>
-          <div className="space-y-3">
-            {rawMaterialTotal > 0 && (
-              <div className="flex justify-between text-gray-700">
-                <span>Raw Material Cost</span>
-                <span>₹{rawMaterialTotal.toFixed(2)}</span>
-              </div>
-            )}
-            <div className="flex justify-between text-gray-700">
-              <span>Grinding Charge</span>
-              <span>₹{grindingTotal.toFixed(2)}</span>
-            </div>
-            <div className="border-t border-gray-200 pt-3 flex justify-between text-lg font-bold text-gray-900">
-              <span>Grand Total</span>
-              <span>₹{totalAmount.toFixed(2)}</span>
+              ))}
             </div>
           </div>
-        </div>
 
-        {/* Estimated Ready Date */}
-        <div className="bg-blue-50 rounded-lg p-4 mb-4">
-          <div className="flex items-center">
-            <svg className="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
+          <header className="mb-10">
+            <h1 className="font-headline text-4xl font-extrabold text-on-background tracking-tight mb-2">Review Order</h1>
+            <p className="text-on-surface-variant">Review your order details before confirmation</p>
+          </header>
+
+          {/* Order Items */}
+          <div className="bg-surface-container-lowest rounded-xl shadow-card border border-outline-variant/10 p-8 mb-5">
+            <h2 className="font-headline font-bold text-lg text-on-surface mb-6">Order Items</h2>
+            <div className="space-y-5">
+              {items.map((item, i) => (
+                <div key={i} className="flex justify-between items-start pb-5 border-b border-surface-container-high last:border-0 last:pb-0">
+                  <div className="flex-1">
+                    <p className="font-headline font-bold text-on-surface">{item.productName}</p>
+                    <p className="text-sm text-on-surface-variant mt-1">
+                      {item.quantity} kg · {item.grindType} · {item.orderType === 'serviceOnly' ? 'Service Only' : 'Buy + Grinding'}
+                    </p>
+                  </div>
+                  <p className="font-bold text-on-surface ml-4">₹{item.itemTotal.toFixed(2)}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Price Breakdown */}
+          <div className="bg-surface-container-lowest rounded-xl shadow-card border border-outline-variant/10 p-8 mb-5">
+            <h2 className="font-headline font-bold text-lg text-on-surface mb-5">Price Breakdown</h2>
+            <div className="space-y-3 text-sm">
+              {rawMaterialTotal > 0 && (
+                <div className="flex justify-between text-on-surface-variant">
+                  <span>Raw Material Cost</span>
+                  <span className="font-medium text-on-surface">₹{rawMaterialTotal.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-on-surface-variant">
+                <span>Grinding Charge</span>
+                <span className="font-medium text-on-surface">₹{grindingTotal.toFixed(2)}</span>
+              </div>
+              <div className="pt-4 border-t border-outline-variant/10 flex justify-between items-center">
+                <span className="font-headline font-bold text-on-surface text-base">Grand Total</span>
+                <span className="font-headline font-extrabold text-2xl text-primary tracking-tight">₹{totalAmount.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Estimated Ready Date */}
+          <div className="bg-primary-container/40 rounded-xl p-6 mb-5 flex items-center gap-4">
+            <div className="bg-primary-container p-3 rounded-xl">
+              <span className="material-symbols-outlined text-primary">calendar_today</span>
+            </div>
             <div>
-              <p className="text-sm font-medium text-blue-900">Estimated Ready Date</p>
-              <p className="text-sm text-blue-700">
-                {estimatedReadyDate?.toLocaleDateString('en-IN', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
+              <p className="text-xs font-bold text-on-primary-container uppercase tracking-widest mb-1">Estimated Ready Date</p>
+              <p className="font-headline font-bold text-on-background">
+                {estimatedReadyDate?.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
             </div>
           </div>
-        </div>
 
-        {/* Delivery Address */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Delivery Address</h2>
-          <div className="text-gray-700 space-y-1">
-            <p className="font-medium">{deliveryAddress.name}</p>
-            <p>{deliveryAddress.phone}</p>
-            <p>{deliveryAddress.doorNo}, {deliveryAddress.houseName}</p>
-            <p>{deliveryAddress.streetType}</p>
-            {deliveryAddress.landmark && <p>Landmark: {deliveryAddress.landmark}</p>}
+          {/* Delivery Address */}
+          <div className="bg-surface-container-lowest rounded-xl shadow-card border border-outline-variant/10 p-8 mb-8">
+            <h2 className="font-headline font-bold text-lg text-on-surface mb-4">Delivery Address</h2>
+            <div className="text-on-surface-variant space-y-1 text-sm">
+              <p className="font-bold text-on-surface">{deliveryAddress.name}</p>
+              <p>{deliveryAddress.phone}</p>
+              <p>{deliveryAddress.doorNo}, {deliveryAddress.houseName}</p>
+              <p>{deliveryAddress.streetType}</p>
+              {deliveryAddress.landmark && <p>Landmark: {deliveryAddress.landmark}</p>}
+            </div>
+          </div>
+        </main>
+
+        {/* Sticky Confirm Button */}
+        <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-xl border-t border-outline-variant/20 p-4 z-40">
+          <div className="max-w-2xl mx-auto">
+            <button
+              onClick={handleConfirmOrder}
+              disabled={loading}
+              className="w-full sage-gradient text-on-primary font-headline font-bold py-5 rounded-full shadow-sage hover:shadow-sage-lg active:scale-[0.97] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-lg"
+            >
+              {loading ? (
+                <>
+                  <svg className="animate-spin h-5 w-5 text-on-primary" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Processing...
+                </>
+              ) : (
+                <>
+                  Confirm Order
+                  <span className="material-symbols-outlined">arrow_forward</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
-
-        {/* Confirm Button */}
-        <div className="fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 p-4 md:relative md:bottom-auto md:border-0 md:bg-transparent md:p-0">
-          <button
-            onClick={handleConfirmOrder}
-            disabled={loading}
-            className="w-full bg-green-600 text-white py-4 px-6 rounded-lg font-semibold text-base hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
-          >
-            {loading ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Processing...
-              </>
-            ) : (
-              'Confirm Order'
-            )}
-          </button>
-        </div>
       </div>
-    </div>
+    </>
   );
 };
 
