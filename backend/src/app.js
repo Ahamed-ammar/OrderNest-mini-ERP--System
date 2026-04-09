@@ -30,6 +30,11 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
 
+    // Allow any localhost port in development
+    if (origin.match(/^http:\/\/localhost:\d+$/)) {
+      return callback(null, true);
+    }
+
     // Allow any Vercel preview/production deployment
     if (origin.match(/https:\/\/.*\.vercel\.app$/)) {
       return callback(null, true);
