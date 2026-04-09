@@ -27,6 +27,7 @@ const OrderManagementPage = () => {
   // Modal states
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [staffModalOpen, setStaffModalOpen] = useState(false);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [newStatus, setNewStatus] = useState('');
   const [selectedStaffId, setSelectedStaffId] = useState('');
@@ -103,6 +104,12 @@ const OrderManagementPage = () => {
     setSelectedOrder(order);
     setSelectedStaffId(order.deliveryStaffId?._id || '');
     setStaffModalOpen(true);
+  };
+
+  // Open order details modal
+  const openDetailsModal = (order) => {
+    setSelectedOrder(order);
+    setDetailsModalOpen(true);
   };
 
   // Handle status update
@@ -332,6 +339,13 @@ const OrderManagementPage = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                         <Button
+                          onClick={() => openDetailsModal(order)}
+                          variant="secondary"
+                          className="text-xs"
+                        >
+                          Details
+                        </Button>
+                        <Button
                           onClick={() => openStatusModal(order)}
                           variant="primary"
                           className="text-xs"
@@ -414,6 +428,13 @@ const OrderManagementPage = () => {
 
                 <div className="flex gap-2">
                   <Button
+                    onClick={() => openDetailsModal(order)}
+                    variant="secondary"
+                    className="flex-1 text-sm"
+                  >
+                    Details
+                  </Button>
+                  <Button
                     onClick={() => openStatusModal(order)}
                     variant="primary"
                     className="flex-1 text-sm"
@@ -435,6 +456,73 @@ const OrderManagementPage = () => {
           )}
         </div>
       </div>
+
+      {/* Order Details Modal */}
+      <Modal
+        isOpen={detailsModalOpen}
+        onClose={() => setDetailsModalOpen(false)}
+        title={`Order #${selectedOrder?._id.slice(-6).toUpperCase()} Details`}
+      >
+        {selectedOrder && (
+          <div className="space-y-4">
+            {/* Customer Info */}
+            <div className="bg-gray-50 rounded-lg p-3">
+              <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Customer</p>
+              <p className="text-sm font-medium text-gray-900">{selectedOrder.customerId?.name || 'N/A'}</p>
+              <p className="text-sm text-gray-600">{selectedOrder.customerId?.phone || selectedOrder.customerId?.email || 'N/A'}</p>
+            </div>
+
+            {/* Ordered Products */}
+            <div>
+              <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Ordered Products</p>
+              <div className="space-y-2">
+                {selectedOrder.items?.map((item, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {item.productId?.name || item.productName || 'Product'}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Qty: {item.quantity} kg &nbsp;|&nbsp; Grind: {item.grindType}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Type: {item.orderType === 'serviceOnly' ? 'Service Only' : 'Buy + Grinding'}
+                        </p>
+                      </div>
+                      <p className="text-sm font-bold text-gray-900">₹{item.itemTotal?.toFixed(2)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Delivery Address */}
+            {selectedOrder.deliveryAddress && (
+              <div className="bg-gray-50 rounded-lg p-3">
+                <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Delivery Address</p>
+                <p className="text-sm text-gray-700">
+                  {selectedOrder.deliveryAddress.doorNo}, {selectedOrder.deliveryAddress.houseName}
+                </p>
+                <p className="text-sm text-gray-700">{selectedOrder.deliveryAddress.streetType}</p>
+                {selectedOrder.deliveryAddress.landmark && (
+                  <p className="text-sm text-gray-500">Landmark: {selectedOrder.deliveryAddress.landmark}</p>
+                )}
+              </div>
+            )}
+
+            {/* Total */}
+            <div className="flex justify-between items-center border-t pt-3">
+              <span className="font-semibold text-gray-900">Grand Total</span>
+              <span className="text-lg font-bold text-green-600">₹{selectedOrder.totalAmount?.toFixed(2)}</span>
+            </div>
+
+            <Button onClick={() => setDetailsModalOpen(false)} variant="secondary" className="w-full">
+              Close
+            </Button>
+          </div>
+        )}
+      </Modal>
 
       {/* Status Update Modal */}
       <Modal

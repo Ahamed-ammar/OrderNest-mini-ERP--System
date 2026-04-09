@@ -6,6 +6,20 @@ import { getProducts } from '../../api/productApi';
 import Loader from '../../components/common/Loader';
 import { toast } from 'react-toastify';
 
+const getProductImage = (product) => {
+  const map = {
+    wheat: '/images/wheat.jpg', rice: '/images/rice.jpg',
+    turmeric: '/images/turmeric-powder.jpg', chili: '/images/chilli.jpg',
+    chilli: '/images/chilli.jpg', coriander: '/images/Coriander.jpg',
+    'garam masala': '/images/garam masala.jpg', ragi: '/images/ragi.jpg',
+  };
+  if (product?.name) {
+    const key = Object.keys(map).find(k => product.name.toLowerCase().includes(k));
+    if (key) return map[key];
+  }
+  return null;
+};
+
 const HomePage = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -13,489 +27,248 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchProducts();
+    getProducts()
+      .then(setProducts)
+      .catch(() => toast.error('Failed to load products'))
+      .finally(() => setLoading(false));
   }, []);
 
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const data = await getProducts();
-      setProducts(data);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      toast.error('Failed to load products');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleOrderNow = () => {
-    if (isAuthenticated()) {
-      navigate('/order/products');
-    } else {
-      navigate('/login');
-    }
-  };
-
-  const handleViewOrders = () => {
-    navigate('/orders');
-  };
-
-  const getProductImage = (product) => {
-    const productImages = {
-      'wheat': '/images/wheat.jpg',
-      'rice': '/images/rice.jpg',
-      'turmeric': '/images/turmeric-powder.jpg',
-      'chili': '/images/chilli.jpg',
-      'chilli': '/images/chilli.jpg',
-      'coriander': '/images/Coriander.jpg',
-      'garam masala': '/images/garam masala.jpg',
-      'ragi': '/images/ragi.jpg',
-    };
-
-    if (product && product.name) {
-      const nameLower = product.name.toLowerCase();
-      const matchedKey = Object.keys(productImages).find(key => nameLower.includes(key));
-      if (matchedKey) return productImages[matchedKey];
-    }
-
-    return '/placeholder-product.svg';
-  };
+  const handleOrder = () => navigate(isAuthenticated() ? '/order/products' : '/login');
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Customer Header */}
+    <div className="min-h-screen bg-background text-on-background">
       <CustomerHeader />
 
-      {/* Hero Section with Background */}
-      <section className="relative overflow-hidden">
-        {/* Background Pattern - Flour/Spice Texture */}
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-          {/* Organic flour/spice texture pattern using CSS */}
-          <div className="absolute inset-0 opacity-20" style={{
-            backgroundImage: `
-              radial-gradient(circle at 20% 50%, rgba(251, 191, 36, 0.3) 0%, transparent 50%),
-              radial-gradient(circle at 80% 80%, rgba(249, 115, 22, 0.3) 0%, transparent 50%),
-              radial-gradient(circle at 40% 20%, rgba(234, 179, 8, 0.2) 0%, transparent 50%),
-              radial-gradient(circle at 60% 70%, rgba(217, 119, 6, 0.2) 0%, transparent 50%)
-            `,
-            backgroundSize: '400px 400px, 300px 300px, 500px 500px, 350px 350px',
-            backgroundPosition: '0 0, 100px 100px, 200px 50px, 300px 200px'
-          }}></div>
-          
-          {/* Subtle grain texture */}
-          <div className="absolute inset-0 opacity-10" style={{
-            backgroundImage: `repeating-linear-gradient(
-              45deg,
-              transparent,
-              transparent 2px,
-              rgba(251, 191, 36, 0.1) 2px,
-              rgba(251, 191, 36, 0.1) 4px
-            )`
-          }}></div>
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 py-16 sm:py-24 sm:px-6 lg:px-8">
-          <div className="text-center">
-            {/* <div className="mb-6">
-              <span className="inline-block text-6xl sm:text-7xl mb-4 animate-bounce">🌾</span>
-            </div> */}
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Welcome to Our Mill
-            </h2>
-            <p className="text-xl sm:text-2xl text-gray-700 mb-4 max-w-3xl mx-auto font-medium">
-              Fresh Ground Flour & Spices
-            </p>
-            <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
-              Experience the authentic taste of traditionally ground flour and spices. 
-              From farm to your kitchen, we preserve the natural goodness.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button
-                onClick={handleOrderNow}
-                className="bg-amber-600 hover:bg-amber-700 text-white font-bold py-5 px-10 rounded-xl text-lg shadow-2xl transform transition hover:scale-105 active:scale-95 min-w-[200px]"
-              >
-                🛒 Order Now
-              </button>
-              {isAuthenticated() && (
+      {/* Hero */}
+      <main className="max-w-7xl mx-auto px-6 md:px-8 py-16 md:py-24">
+        <header className="mb-24">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <h1 className="font-headline text-5xl lg:text-7xl font-extrabold tracking-tighter text-on-background leading-[1.1]">
+                Fresh Ground <span className="text-primary italic">Flour & Spices</span> at Your Door.
+              </h1>
+              <p className="text-on-surface-variant text-lg font-body leading-relaxed max-w-md">
+                Experience the authentic taste of traditionally ground flour and spices. From farm to your kitchen, we preserve the natural goodness.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={handleViewOrders}
-                  className="bg-white hover:bg-gray-50 text-amber-700 font-bold py-5 px-10 rounded-xl text-lg shadow-xl transform transition hover:scale-105 active:scale-95 border-2 border-amber-200 min-w-[200px]"
+                  onClick={handleOrder}
+                  className="sage-gradient text-on-primary font-headline font-bold px-10 py-5 rounded-full shadow-sage hover:shadow-sage-lg hover:opacity-95 active:scale-[0.97] transition-all text-lg"
                 >
-                  📦 My Orders
+                  Order Now
                 </button>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Decorative wave at bottom */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
-            <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="rgb(249, 250, 251)"/>
-          </svg>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section className="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl shadow-xl p-8 sm:p-10 border border-amber-200">
-          <div className="flex items-center justify-center mb-6">
-            <div className="text-5xl mr-4">🏛️</div>
-            <h3 className="text-3xl sm:text-4xl font-bold text-gray-900">About Our Mill</h3>
-          </div>
-          <div className="prose prose-lg max-w-none text-gray-700 space-y-4">
-            <p className="text-lg leading-relaxed">
-              For over <span className="font-bold text-amber-700">10 years</span>, our family-owned flour and spice mill has been serving the community 
-              with premium grinding services. We take pride in preserving the authentic taste and aroma of 
-              your ingredients through our traditional stone grinding methods.
-            </p>
-            <p className="text-lg leading-relaxed">
-              Whether you bring your own raw materials or purchase from our selection of premium grains and 
-              spices, we ensure every batch is ground to perfection with your preferred coarseness level.
-            </p>
-            <p className="text-lg leading-relaxed">
-              Our commitment to <span className="font-bold text-amber-700">quality, hygiene, and customer satisfaction</span> has made us the trusted choice 
-              for households and businesses alike.
-            </p>
-          </div>
-          
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t-2 border-amber-200">
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-amber-700 mb-2">10+</div>
-              <div className="text-sm sm:text-base text-gray-600">Years Experience</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-amber-700 mb-2">10K+</div>
-              <div className="text-sm sm:text-base text-gray-600">Happy Customers</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-amber-700 mb-2">100%</div>
-              <div className="text-sm sm:text-base text-gray-600">Quality Assured</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Products Overview Section */}
-      <section id="products" className="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-amber-100">
-          <div className="text-center mb-8">
-            <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">Our Services</h3>
-            <p className="text-gray-600 text-lg">Choose the service that fits your needs</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-            {/* Service Only */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition"></div>
-              <div className="relative bg-white border-2 border-amber-300 rounded-2xl p-8 hover:border-amber-500 transition shadow-lg hover:shadow-2xl transform hover:-translate-y-1">
-                <div className="text-6xl mb-4 text-center">⚙️</div>
-                <h4 className="text-2xl font-bold text-gray-900 mb-3 text-center">Grinding Service Only</h4>
-                <p className="text-gray-600 mb-6 text-center">
-                  Bring your own raw materials and we'll grind them to perfection
-                </p>
-                <ul className="space-y-3">
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-600 text-xl flex-shrink-0">✓</span>
-                    <span className="text-gray-700">Choose from Fine, Medium, or Coarse grind</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-600 text-xl flex-shrink-0">✓</span>
-                    <span className="text-gray-700">Traditional stone grinding method</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-600 text-xl flex-shrink-0">✓</span>
-                    <span className="text-gray-700">Ready in 2 business days</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-600 text-xl flex-shrink-0">✓</span>
-                    <span className="text-gray-700">Affordable grinding charges</span>
-                  </li>
-                </ul>
+                {isAuthenticated() && (
+                  <button
+                    onClick={() => navigate('/orders')}
+                    className="bg-surface-container-low text-on-surface font-headline font-bold px-10 py-5 rounded-full hover:bg-surface-container-high active:scale-[0.97] transition-all text-lg"
+                  >
+                    My Orders
+                  </button>
+                )}
+              </div>
+              {/* Stats */}
+              <div className="flex gap-8 pt-4">
+                {[['10+', 'Years Experience'], ['10K+', 'Happy Customers'], ['100%', 'Quality Assured']].map(([val, label]) => (
+                  <div key={label}>
+                    <div className="text-2xl font-headline font-extrabold text-primary">{val}</div>
+                    <div className="text-xs text-on-surface-variant font-medium">{label}</div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Buy + Grinding */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition"></div>
-              <div className="relative bg-white border-2 border-green-300 rounded-2xl p-8 hover:border-green-500 transition shadow-lg hover:shadow-2xl transform hover:-translate-y-1">
-                <div className="text-6xl mb-4 text-center">🌾</div>
-                <h4 className="text-2xl font-bold text-gray-900 mb-3 text-center">Buy Raw Materials + Grinding</h4>
-                <p className="text-gray-600 mb-6 text-center">
-                  Purchase premium quality ingredients and get them ground
-                </p>
-                <ul className="space-y-3">
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-600 text-xl flex-shrink-0">✓</span>
-                    <span className="text-gray-700">Premium quality raw materials</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-600 text-xl flex-shrink-0">✓</span>
-                    <span className="text-gray-700">Sourced from trusted suppliers</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-600 text-xl flex-shrink-0">✓</span>
-                    <span className="text-gray-700">Includes grinding service</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-600 text-xl flex-shrink-0">✓</span>
-                    <span className="text-gray-700">Convenient one-stop solution</span>
-                  </li>
-                </ul>
+            {/* Hero image */}
+            <div className="relative hidden lg:block">
+              <div className="rounded-xl overflow-hidden aspect-[4/5] shadow-[0_40px_80px_rgba(50,50,50,0.12)] bg-surface-container-low">
+                <img
+                  src="/images/wheat.jpg"
+                  alt="Fresh ground flour"
+                  className="w-full h-full object-cover"
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
+              </div>
+              <div className="absolute -bottom-8 -left-8 bg-surface-container-lowest/90 backdrop-blur-xl p-6 rounded-xl shadow-card max-w-xs border border-outline-variant/10">
+                <p className="font-headline font-bold text-primary mb-1 italic">Mill Fresh</p>
+                <p className="text-on-background font-body text-sm leading-snug">Traditional stone grinding preserves natural aroma and nutrients.</p>
               </div>
             </div>
           </div>
+        </header>
 
-          {/* Popular Products */}
-          <div className="pt-8 border-t-2 border-amber-100">
-            <h4 className="text-2xl font-bold text-gray-900 mb-6 text-center">Our Products</h4>
-            
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <Loader />
-              </div>
-            ) : products.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
-                <p className="text-lg">No products available at the moment</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {products.map((product) => (
+        {/* Products Section */}
+        <section className="space-y-10">
+          <div className="flex justify-between items-end">
+            <div>
+              <h2 className="font-headline text-3xl font-bold tracking-tight text-on-background">Our Products</h2>
+              <p className="text-on-surface-variant mt-2">Premium flour and spices, precision-ground to your preference</p>
+            </div>
+            <button
+              onClick={handleOrder}
+              className="hidden md:flex items-center gap-2 text-primary font-headline font-bold hover:underline underline-offset-4"
+            >
+              View All <span className="material-symbols-outlined text-base">arrow_forward</span>
+            </button>
+          </div>
+
+          {loading ? (
+            <div className="flex justify-center py-16"><Loader /></div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-16 text-on-surface-variant">No products available at the moment.</div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {products.map((product) => {
+                const img = getProductImage(product);
+                return (
                   <div
                     key={product._id}
-                    className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-amber-100 hover:border-amber-300 flex flex-col"
+                    className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-card border border-outline-variant/10 transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 flex flex-col"
                   >
-                    {/* Image Container */}
-                    <div className="relative h-56 overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50">
-                      <img
-                        src={getProductImage(product)}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'flex';
-                        }}
-                      />
-                      {/* Fallback gradient if image fails */}
-                      <div className="hidden absolute inset-0 bg-gradient-to-br from-amber-200 to-orange-300 items-center justify-center">
-                        <span className="text-6xl">🌾</span>
+                    {/* Image */}
+                    <div className="relative aspect-square overflow-hidden bg-surface-container-low">
+                      {img ? (
+                        <img
+                          src={img}
+                          alt={product.name}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                        />
+                      ) : null}
+                      <div className={`${img ? 'hidden' : 'flex'} absolute inset-0 bg-primary-container items-center justify-center`}>
+                        <span className="material-symbols-outlined text-5xl text-primary">grain</span>
                       </div>
-                      {/* Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                      
-                      {/* Product Name Overlay */}
-                      <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <h5 className="text-2xl font-bold text-white drop-shadow-lg">{product.name}</h5>
+                      <div className="absolute top-3 right-3 bg-secondary-container/90 backdrop-blur text-on-secondary-container px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest">
+                        Mill-Fresh
                       </div>
                     </div>
-                    
+
                     {/* Content */}
-                    <div className="p-6 flex-grow flex flex-col">
-                      {/* Pricing Information */}
-                      <div className="space-y-3 mb-6 flex-grow">
-                        <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                          <div className="flex justify-between items-center mb-2">
-                            <span className="text-sm font-medium text-gray-600">Raw Material</span>
-                            <span className="text-lg font-bold text-amber-700">
-                              ₹{product.rawMaterialPricePerKg}/kg
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm font-medium text-gray-600">Grinding Service</span>
-                            <span className="text-lg font-bold text-green-700">
-                              ₹{product.grindingChargePerKg}/kg
-                            </span>
-                          </div>
+                    <div className="p-5 flex flex-col flex-1">
+                      <h3 className="font-headline font-bold text-lg text-on-background mb-3">{product.name}</h3>
+                      <div className="space-y-2 text-sm mb-4 flex-1">
+                        <div className="flex justify-between">
+                          <span className="text-on-surface-variant">Raw Material</span>
+                          <span className="font-bold">₹{product.rawMaterialPricePerKg}/kg</span>
                         </div>
-                        
-                        {/* Service Options */}
-                        <div className="text-sm text-gray-600 space-y-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-green-600">✓</span>
-                            <span>Service Only: ₹{product.grindingChargePerKg}/kg</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-green-600">✓</span>
-                            <span>Buy + Grinding: ₹{(product.rawMaterialPricePerKg + product.grindingChargePerKg).toFixed(2)}/kg</span>
-                          </div>
+                        <div className="flex justify-between">
+                          <span className="text-on-surface-variant">Grinding Service</span>
+                          <span className="font-bold">₹{product.grindingChargePerKg}/kg</span>
+                        </div>
+                        <div className="pt-3 border-t border-outline-variant/10 flex justify-between items-center">
+                          <span className="font-bold text-on-surface text-xs">Buy + Grind</span>
+                          <span className="text-xl font-extrabold text-primary tracking-tighter">
+                            ₹{(product.rawMaterialPricePerKg + product.grindingChargePerKg).toFixed(0)}
+                          </span>
                         </div>
                       </div>
-                      
-                      {/* Buttons */}
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="flex gap-2">
                         <button
                           onClick={() => navigate(`/product/${product._id}`)}
-                          className="bg-white hover:bg-gray-50 text-amber-700 font-semibold py-3 px-4 rounded-lg text-sm shadow-md border-2 border-amber-200 hover:border-amber-300 transition flex items-center justify-center gap-2"
+                          className="flex-1 py-2.5 text-sm font-headline font-bold text-primary border-2 border-primary/20 rounded-full hover:bg-primary/5 transition-all"
                         >
-                          {/* <span>ℹ️</span> */}
-                          <span>Details</span>
+                          Details
                         </button>
                         <button
-                          onClick={handleOrderNow}
-                          className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-4 rounded-lg text-sm shadow-md transform transition hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                          onClick={handleOrder}
+                          className="flex-1 py-2.5 text-sm sage-gradient text-on-primary font-headline font-bold rounded-full shadow-sage hover:shadow-sage-lg active:scale-95 transition-all"
                         >
-                          <span>🛒</span>
-                          <span>Order</span>
+                          Order
                         </button>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Offers Section */}
-      <section className="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 rounded-2xl shadow-2xl p-8 sm:p-10 text-white">
-          {/* Decorative elements */}
-          <div className="absolute top-0 right-0 -mt-4 -mr-4 w-40 h-40 bg-white opacity-10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
-          
-          <div className="relative z-10">
-            <div className="flex items-center justify-center mb-6">
-              <h3 className="text-3xl sm:text-4xl font-bold">🎉 Special Offers</h3>
+                );
+              })}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/30 hover:bg-white/30 transition">
-                <div className="text-4xl mb-3">🎁</div>
-                <h4 className="text-2xl font-bold mb-3">First Order Discount</h4>
-                <p className="text-green-50 text-lg mb-3">
-                  Get 10% off on your first order!
-                </p>
-                <div className="inline-block bg-white/30 px-4 py-2 rounded-lg font-mono font-bold text-lg">
-                  WELCOME10
-                </div>
-              </div>
-              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/30 hover:bg-white/30 transition">
-                <div className="text-4xl mb-3">📦</div>
-                <h4 className="text-2xl font-bold mb-3">Bulk Order Benefits</h4>
-                <p className="text-green-50 text-lg">
-                  Order 10kg or more and enjoy special pricing on grinding charges!
-                </p>
-              </div>
+          )}
+        </section>
+
+        {/* Services Section */}
+        <section className="mt-24 grid grid-cols-1 md:grid-cols-12 gap-8 md:h-[420px]">
+          <div className="md:col-span-8 bg-surface-container-low rounded-xl overflow-hidden relative group">
+            <img
+              src="/images/wheat.jpg"
+              alt="Mill"
+              className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-10 text-white">
+              <span className="text-xs font-bold tracking-widest uppercase mb-3 text-primary-container">About Our Mill</span>
+              <h3 className="font-headline text-3xl font-bold mb-3">Traditional Stone Grinding</h3>
+              <p className="max-w-lg font-body text-white/80 mb-6">For over 10 years, our family-owned mill has been serving the community with premium grinding services using traditional stone methods.</p>
+              <button
+                onClick={handleOrder}
+                className="w-fit px-8 py-3 bg-white text-on-background rounded-full font-headline font-bold hover:bg-primary-container transition-colors"
+              >
+                Start Your Order
+              </button>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="max-w-7xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-br from-white to-amber-50 rounded-2xl shadow-xl p-8 sm:p-10 border border-amber-200">
-          <div className="text-center mb-8">
-            <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">Get In Touch</h3>
-            <p className="text-gray-600 text-lg">We're here to help with your grinding needs</p>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Contact Information */}
-            <div className="space-y-6">
-              <div className="flex items-start gap-4 p-5 bg-white rounded-xl shadow-md hover:shadow-lg transition border border-amber-100">
-                <div className="text-4xl flex-shrink-0">📞</div>
-                <div>
-                  <h4 className="font-bold text-gray-900 mb-2 text-lg">Phone</h4>
-                  <a
-                    href="tel:+919876543210"
-                    className="text-amber-600 hover:text-amber-700 text-xl font-semibold block"
-                  >
-                    +91 98765 43210
-                  </a>
-                  <p className="text-sm text-gray-600 mt-2">Call us for inquiries and orders</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4 p-5 bg-white rounded-xl shadow-md hover:shadow-lg transition border border-amber-100">
-                <div className="text-4xl flex-shrink-0">🕐</div>
-                <div>
-                  <h4 className="font-bold text-gray-900 mb-2 text-lg">Working Hours</h4>
-                  <p className="text-gray-700 font-medium">Monday - Saturday</p>
-                  <p className="text-amber-600 font-semibold">8:00 AM - 7:00 PM</p>
-                  <p className="text-gray-500 text-sm mt-2">Sunday: Closed</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4 p-5 bg-white rounded-xl shadow-md hover:shadow-lg transition border border-amber-100">
-                <div className="text-4xl flex-shrink-0">📍</div>
-                <div>
-                  <h4 className="font-bold text-gray-900 mb-2 text-lg">Address</h4>
-                  <p className="text-gray-700 leading-relaxed mb-3">
-                    Traditional Flour & Spice Mill<br />
-                    Kerala, India
-                  </p>
-                  <a
-                    href="https://maps.app.goo.gl/HytNPx4N8q6tYvpbA"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-medium text-sm"
-                  >
-                    <span>View on Map</span>
-                    <span>→</span>
-                  </a>
-                </div>
-              </div>
-
-              {/* CTA Button for Mobile */}
-              <div className="mt-8 lg:hidden">
-                <button
-                  onClick={handleOrderNow}
-                  className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-4 px-6 rounded-lg text-lg shadow-lg"
-                >
-                  🛒 Place Your Order
-                </button>
-              </div>
+          <div className="md:col-span-4 flex flex-col gap-6">
+            <div className="flex-1 bg-secondary-container/30 rounded-xl p-8 flex flex-col justify-center items-center text-center">
+              <span className="material-symbols-outlined text-4xl text-primary mb-3">local_shipping</span>
+              <h4 className="font-headline font-bold text-xl mb-2">Home Delivery</h4>
+              <p className="text-sm text-on-surface-variant font-body">Fresh ground products delivered to your doorstep.</p>
             </div>
-
-            {/* Google Maps */}
-            <div>
-              <h4 className="font-bold text-gray-900 mb-3 text-lg">Find Us</h4>
-              <div className="rounded-xl overflow-hidden shadow-lg h-64 lg:h-full min-h-[300px] border-2 border-amber-100">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.9876543210123!2d76.12345678901234!3d9.876543210987654!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOcKwNTInMzUuNiJOIDc2wrAwNyczMi40IkU!5e0!3m2!1sen!2sin!4v1234567890123!5m2!1sen!2sin"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Mill Location"
-                ></iframe>
-              </div>
-              <div className="mt-4 text-center">
-                <a
-                  href="https://maps.app.goo.gl/HytNPx4N8q6tYvpbA"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-semibold text-lg"
-                >
-                  <span>📍</span>
-                  <span>Open in Google Maps</span>
-                  <span>→</span>
-                </a>
-              </div>
+            <div className="flex-1 bg-tertiary-container/30 rounded-xl p-8 flex flex-col justify-center items-center text-center">
+              <span className="material-symbols-outlined text-4xl text-tertiary mb-3">verified</span>
+              <h4 className="font-headline font-bold text-xl mb-2">Quality Assured</h4>
+              <p className="text-sm text-on-surface-variant font-body">Every batch inspected for consistency and freshness.</p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* Contact */}
+        <section id="contact" className="mt-24">
+          <div className="bg-surface-container-low rounded-xl p-10">
+            <div className="text-center mb-10">
+              <h3 className="font-headline text-3xl font-bold text-on-background mb-2">Get In Touch</h3>
+              <p className="text-on-surface-variant">We're here to help with your grinding needs</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { icon: 'call', title: 'Phone', content: '+91 98765 43210', href: 'tel:+919876543210' },
+                { icon: 'schedule', title: 'Working Hours', content: 'Mon–Sat: 8AM – 7PM', href: null },
+                { icon: 'location_on', title: 'Location', content: 'Kerala, India', href: 'https://maps.app.goo.gl/HytNPx4N8q6tYvpbA' },
+              ].map(({ icon, title, content, href }) => (
+                <div key={title} className="bg-surface-container-lowest rounded-xl p-6 flex items-start gap-4 shadow-card">
+                  <div className="bg-primary-container p-3 rounded-xl">
+                    <span className="material-symbols-outlined text-primary">{icon}</span>
+                  </div>
+                  <div>
+                    <h4 className="font-headline font-bold text-on-background mb-1">{title}</h4>
+                    {href ? (
+                      <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary font-medium hover:underline">{content}</a>
+                    ) : (
+                      <p className="text-on-surface-variant">{content}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white mt-12 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-300">
-            © 2026 Flour & Spice Mill. All rights reserved.
-          </p>
-          <p className="text-gray-400 text-sm mt-2">
-            Quality grinding services since 1990
-          </p>
+      <footer className="mt-24 border-t border-outline-variant/10 bg-surface-container-low pt-16 pb-20">
+        <div className="max-w-7xl mx-auto px-6 md:px-8 grid grid-cols-1 md:grid-cols-3 gap-10 items-center">
+          <div>
+            <div className="font-headline font-black text-2xl tracking-tighter text-on-background mb-3 italic">Flour &amp; Spice Mill</div>
+            <p className="text-on-surface-variant text-sm font-body max-w-xs">Artisanal grinding since 1990. Quality that spans generations.</p>
+          </div>
+          <div className="flex justify-center gap-8 font-headline font-semibold text-sm">
+            <a href="#contact" className="text-on-surface-variant hover:text-primary transition-colors">Contact</a>
+            <a href="#" className="text-on-surface-variant hover:text-primary transition-colors">Privacy</a>
+            <a href="#" className="text-on-surface-variant hover:text-primary transition-colors">Terms</a>
+          </div>
+          <div className="md:text-right">
+            <p className="text-xs text-on-surface-variant">© 2026 Flour &amp; Spice Mill. All rights reserved.</p>
+          </div>
         </div>
       </footer>
 
-      {/* Add padding at bottom for mobile sticky button and bottom nav */}
-      <div className="md:hidden h-40"></div>
+      {/* Mobile bottom padding */}
+      <div className="md:hidden h-24" />
     </div>
   );
 };
